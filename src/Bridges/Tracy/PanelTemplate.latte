@@ -1,0 +1,50 @@
+<h1>{$translateClass}</h1>
+<div class="tracy-inner">
+    <table class="table">
+        <caption>Layout translate</caption>
+        <thead>
+        <tr>
+            <th>Ident</th>
+            {ifset $locales}
+                <th n:foreach="$locales as $locale" {if $locale['code']==$localeCode}class="active"{/if}>{$locale['code']}</th>
+            {/ifset}
+            <th>File</th>
+            <th>Line</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr n:foreach="$translateLayout as $translate">
+            <td>{$translate}</td>
+            {ifset $locales}
+                <td n:foreach="$locales as $locale">{if isset($translateSearch[$translate]) && in_array($locale['id'], $translateSearch[$translate])}OK{else}---{/if}</td>
+            {/ifset}
+            <td>{$translatesMap[$translate]['file']}</td>
+            <td>{$translatesMap[$translate]['line']}</td>
+        </tr>
+        </tbody>
+    </table>
+
+    <table class="table">
+        <caption>Content translate</caption>
+        <thead>
+        <tr>
+            <th>Ident</th>
+            {ifset $locales}
+                <th n:foreach="$locales as $locale" {if $locale['code']==$localeCode}class="active"{/if}>{$locale['code']}</th>
+            {/ifset}
+            <th>File</th>
+            <th>Line</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr n:foreach="$translateContent as $translate">
+            <td>{$translate}</td>
+            {ifset $locales}
+                <td n:foreach="$locales as $locale">{if isset($translateSearch[$translate]) && in_array($locale['id'], $translateSearch[$translate])}OK{else}---{/if}</td>
+            {/ifset}
+            <td>{$translatesMap[$translate]['file']}</td>
+            <td>{$translatesMap[$translate]['line']}</td>
+        </tr>
+        </tbody>
+    </table>
+</div>
