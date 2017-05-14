@@ -28,19 +28,19 @@ class Extension extends CompilerExtension
         switch ($config['source']) {
             case 'DevNull':
                 $translatorService = $builder->addDefinition($this->prefix('default'))
-                    ->setClass('TranslatorServices\Drivers\DevNull')
+                    ->setClass('TranslatorServices\Drivers\DevNullDriver')
                     ->setInject(false);
                 break;
 
             case 'Database':
                 $translatorService = $builder->addDefinition($this->prefix('default'))
-                    ->setClass('TranslatorServices\Drivers\Database', [$config['parameters']])
+                    ->setClass('TranslatorServices\Drivers\DatabaseDriver', [$config['parameters']])
                     ->setInject(false);
                 break;
 
             case 'Neon':
                 $translatorService = $builder->addDefinition($this->prefix('default'))
-                    ->setClass('TranslatorServices\Drivers\Neon', [$config['parameters']])
+                    ->setClass('TranslatorServices\Drivers\NeonDriver', [$config['parameters']])
                     ->setInject(false);
                 break;
         }
