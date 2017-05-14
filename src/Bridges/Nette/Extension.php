@@ -4,6 +4,11 @@ namespace Translator\Bridges\Nette;
 
 use Nette;
 use Nette\DI\CompilerExtension;
+use Tracy\IBarPanel;
+use Translator\Bridges\Tracy\Panel;
+use Translator\Drivers\DatabaseDriver;
+use Translator\Drivers\DevNullDriver;
+use Translator\Drivers\NeonDriver;
 
 
 /**
@@ -28,27 +33,27 @@ class Extension extends CompilerExtension
         switch ($config['source']) {
             case 'DevNull':
                 $translator = $builder->addDefinition($this->prefix('default'))
-                    ->setClass('Translator\Drivers\DevNullDriver')
+                    ->setClass(DevNullDriver::class)
                     ->setInject(false);
                 break;
 
             case 'Database':
                 $translator = $builder->addDefinition($this->prefix('default'))
-                    ->setClass('Translator\Drivers\DatabaseDriver', [$config['parameters']])
+                    ->setClass(DatabaseDriver::class, [$config['parameters']])
                     ->setInject(false);
                 break;
 
             case 'Neon':
                 $translator = $builder->addDefinition($this->prefix('default'))
-                    ->setClass('Translator\Drivers\NeonDriver', [$config['parameters']])
+                    ->setClass(NeonDriver::class, [$config['parameters']])
                     ->setInject(false);
                 break;
         }
 
         // pokud je debugmod a existuje rozhranni tak aktivuje panel
-        if ($builder->parameters['debugMode'] && interface_exists('Tracy\IBarPanel')) {
+        if ($builder->parameters['debugMode'] && interface_exists(IBarPanel::class)) {
             $builder->addDefinition($this->prefix('panel'))
-                ->setClass('Translator\Bridges\Tracy\Panel');
+                ->setClass(Panel::class);
 
             $translator->addSetup('?->register(?)', [$this->prefix('@panel'), '@self']);
         }
