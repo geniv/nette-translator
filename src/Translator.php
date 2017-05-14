@@ -2,7 +2,7 @@
 
 namespace Translator;
 
-use LocaleServices\LocaleService;
+use Locale\Locale;
 use Nette\Localization\ITranslator;
 use Nette\Utils\Strings;
 use Nette\SmartObject;
@@ -20,8 +20,8 @@ abstract class Translator implements ITranslator
 {
     use SmartObject;
 
-    /** @var LocaleService locale service */
-    protected $localeService;
+    /** @var Locale locale from DI */
+    protected $locale;
     /** @var array dictionary array */
     protected $dictionary = [];
     /** @var string plural format */
@@ -31,16 +31,16 @@ abstract class Translator implements ITranslator
     /**
      * Translator constructor.
      *
-     * @param LocaleService $localeService
+     * @param Locale $locale
      */
-    protected function __construct(LocaleService $localeService)
+    protected function __construct(Locale $locale)
     {
-        $this->localeService = $localeService;
+        $this->locale = $locale;
 
         // example: '$plural=(n==1) ? 0 : ((n>=2 && n<=4) ? 1 : 2);'
         // zdroj: http://docs.translatehouse.org/projects/localization-guide/en/latest/l10n/pluralforms.html
         // predavani pluralu z locales do translatu vzdy pro konkretni jazyk
-        $this->plural = $localeService->getPlural();
+        $this->plural = $locale->getPlural();
     }
 
 

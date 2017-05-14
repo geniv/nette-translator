@@ -3,6 +3,7 @@
 namespace Translator\Bridges\Tracy;
 
 use Latte\Engine;
+use Translator\Translator;
 use Latte\MacroTokens;
 use Latte\Parser;
 use Latte\PhpWriter;
@@ -10,7 +11,6 @@ use Nette\DI\Container;
 use Nette\SmartObject;
 use Tracy\Debugger;
 use Tracy\IBarPanel;
-use Translator\Translator;
 
 
 /**
@@ -72,7 +72,7 @@ class Panel implements IBarPanel
      */
     public function getPanel()
     {
-        $localeService = $this->container->getByType('LocaleServices\LocaleService');   // nacteni lokalizacni sluzby
+        $locale = $this->container->getByType('Locale\Locale');   // nacteni lokalizacni sluzby
         $application = $this->container->getByType('Nette\Application\Application');    // nacteni aplikace
         $presenter = $application->getPresenter();  // nacteni presenteru
 
@@ -85,8 +85,8 @@ class Panel implements IBarPanel
 
         $params = [
             // locales
-            'locales'          => $localeService->getLocales(),
-            'localeCode'       => $localeService->getCode(),
+            'locales'          => $locale->getLocales(),
+            'localeCode'       => $locale->getCode(),
             // translates
             'translateLayout'  => $layoutTranslate,
             'translateContent' => $contentTranslate,
@@ -173,7 +173,7 @@ class Panel implements IBarPanel
  * vnitrni trida pro mapovani umisteni prekladu v latte
  *
  * @author  geniv
- * @package TranslatorServices\Bridges\Tracy
+ * @package Translator\Bridges\Tracy
  */
 class TranslateMap
 {

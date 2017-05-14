@@ -3,7 +3,7 @@
 namespace Translator\Drivers;
 
 use Translator\Translator;
-use LocaleServices\LocaleService;
+use Locale\Locale;
 use dibi;
 use Dibi\Connection;
 use Nette\Caching\Cache;
@@ -21,22 +21,26 @@ use Exception;
  */
 class DatabaseDriver extends Translator
 {
-    private $cache, $cacheKey, $idLocale;
-    protected $database, $tableTranslate, $tableTranslateIdent;
+    private $cache;
+    private $cacheKey;
+    private $idLocale;
+    protected $database;
+    private $tableTranslate;
+    private $tableTranslateIdent;
 
 
     /**
      * DatabaseDriver constructor.
      *
-     * @param array         $parameters
-     * @param Connection    $database
-     * @param LocaleService $localeService
-     * @param IStorage      $cacheStorage
+     * @param array      $parameters
+     * @param Connection $database
+     * @param Locale     $locale
+     * @param IStorage   $cacheStorage
      * @throws Exception
      */
-    public function __construct(array $parameters, Connection $database, LocaleService $localeService, IStorage $cacheStorage)
+    public function __construct(array $parameters, Connection $database, Locale $locale, IStorage $cacheStorage)
     {
-        parent::__construct($localeService);
+        parent::__construct($locale);
 
         // pokud parametr table neexistuje
         if (!isset($parameters['table'])) {
@@ -51,7 +55,7 @@ class DatabaseDriver extends Translator
 
         $this->cache = new Cache($cacheStorage, 'cache' . __CLASS__);
 
-        $this->idLocale = $this->localeService->getId();
+        $this->idLocale = $this->locale->getId();
         // klic pro cache
         $this->cacheKey = 'dictionary' . $this->idLocale;
 

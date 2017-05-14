@@ -3,7 +3,7 @@
 namespace Translator\Drivers;
 
 use Translator\Translator;
-use LocaleServices\LocaleService;
+use Locale\Locale;
 use Nette\Neon\Neon;
 
 
@@ -24,12 +24,12 @@ class NeonDriver extends Translator
     /**
      * NeonDriver constructor.
      *
-     * @param array         $parameters
-     * @param LocaleService $localeService
+     * @param array  $parameters
+     * @param Locale $locale
      */
-    public function __construct(array $parameters, LocaleService $localeService)
+    public function __construct(array $parameters, Locale $locale)
     {
-        parent::__construct($localeService);
+        parent::__construct($locale);
 
         // pokud parametr table neexistuje
         if (!isset($parameters['path'])) {
@@ -39,7 +39,7 @@ class NeonDriver extends Translator
         $path = $parameters['path'];
 
         // vytvoreni cesty
-        $this->path = $path . '/dictionary-' . $localeService->getCode() . '.neon';
+        $this->path = $path . '/dictionary-' . $locale->getCode() . '.neon';
 
         $this->loadTranslate();    // nacteni prekladu
     }
