@@ -1,6 +1,6 @@
 <?php
 
-namespace TranslatorServices\Bridges\Tracy;
+namespace Translator\Bridges\Tracy;
 
 use Latte\Engine;
 use Latte\MacroTokens;
@@ -10,20 +10,22 @@ use Nette\DI\Container;
 use Nette\SmartObject;
 use Tracy\Debugger;
 use Tracy\IBarPanel;
-use TranslatorService\TranslatorService;
+use Translator\Translator;
 
 
 /**
  * Class Panel
  *
  * @author  geniv
- * @package TranslatorServices\Bridges\Tracy
+ * @package Translator\Bridges\Tracy
  */
 class Panel implements IBarPanel
 {
     use SmartObject;
 
-    private $translatorService;
+    /** @var Translator translator from DI */
+    private $translator;
+    /** @var Container container from DI */
     private $container;
 
 
@@ -41,11 +43,11 @@ class Panel implements IBarPanel
     /**
      * Register to Tracy.
      *
-     * @param TranslatorService $translatorService
+     * @param Translator $translator
      */
-    public function register(TranslatorService $translatorService)
+    public function register(Translator $translator)
     {
-        $this->translatorService = $translatorService;
+        $this->translator = $translator;
         Debugger::getBar()->addPanel($this);
     }
 
@@ -88,8 +90,8 @@ class Panel implements IBarPanel
             // translates
             'translateLayout'  => $layoutTranslate,
             'translateContent' => $contentTranslate,
-            'translateClass'   => get_class($this->translatorService),
-            'translateSearch'  => $this->translatorService->searchTranslate(array_merge($layoutTranslate, $contentTranslate)),   // vyhledani prekladu v driveru prekladace
+            'translateClass'   => get_class($this->translator),
+            'translateSearch'  => $this->translator->searchTranslate(array_merge($layoutTranslate, $contentTranslate)),   // vyhledani prekladu v driveru prekladace
             'translatesMap'    => $translateMap->toArray(), // mapa umisteni prekladu
         ];
 

@@ -1,30 +1,30 @@
 <?php
 
-namespace TranslatorServices\Drivers;
+namespace Translator\Drivers;
 
+use Translator\Translator;
 use LocaleServices\LocaleService;
-use TranslatorService\TranslatorService;
 
 
 /**
- * Class DevNull
+ * Class DevNullDriver
  *
  * /Dev/Null translator s podporou plural substituce a podporou samostatne substituce, bez uloziste
  *
  * @author  geniv
- * @package TranslatorServices\Drivers
+ * @package Translator\Drivers
  */
-class DevNull extends TranslatorService
+class DevNullDriver extends Translator
 {
 
     /**
-     * DevNull constructor.
+     * DevNullDriver constructor.
      *
-     * @param LocaleService $languageService
+     * @param LocaleService $localeService
      */
-    public function __construct(LocaleService $languageService)
+    public function __construct(LocaleService $localeService)
     {
-        parent::__construct($languageService);
+        parent::__construct($localeService);
     }
 
 
@@ -38,11 +38,10 @@ class DevNull extends TranslatorService
      */
     public function translate($message, $count = null, $plurals = null)
     {
-        $code = $this->languageService->getCode();
-        if (isset($this->plural[$code]) && isset($count) && isset($plurals)) {
+        if (isset($this->plural) && isset($count) && isset($plurals)) {
             $plural = null; // vystupni promenna typu pluralu
             $n = $count;    // predani poctu polozek
-            eval($this->plural[$code]);    // samotna evaluace pluralu
+            eval($this->plural);    // samotna evaluace pluralu
             return sprintf($plurals[$plural], $count);  // vyber spravneho indexu z pole pluralu
         }
 
@@ -56,7 +55,7 @@ class DevNull extends TranslatorService
 
 
     /**
-     * nacitani prekladu
+     * Load translate.
      *
      * @return mixed
      */
@@ -67,7 +66,7 @@ class DevNull extends TranslatorService
 
 
     /**
-     * ukladani prekladu
+     * Save translate.
      *
      * @param $index
      * @param $message
@@ -80,13 +79,13 @@ class DevNull extends TranslatorService
 
 
     /**
-     * hledani prekladu podle identu
+     * Search translate by idents.
      *
-     * @param $idents
+     * @param array $idents
      * @return mixed
      */
-    public function searchTranslate($idents)
+    public function searchTranslate(array $idents)
     {
-        // TODO: Implement searchTranslate() method.
+        return [];
     }
 }

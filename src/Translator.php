@@ -1,42 +1,46 @@
 <?php
 
-namespace TranslatorService;
+namespace Translator;
 
 use LocaleServices\LocaleService;
 use Nette\Localization\ITranslator;
-use Nette\SmartObject;
 use Nette\Utils\Strings;
+use Nette\SmartObject;
 
 
 /**
- * Class TranslatorService
+ * Class Translator
  *
  * abstraktni trida prekladu
  *
  * @author  geniv
- * @package TranslatorService
+ * @package Translator
  */
-abstract class TranslatorService implements ITranslator
+abstract class Translator implements ITranslator
 {
     use SmartObject;
 
-    protected $languageService, $dictionary;
-    private $plural = null;
+    /** @var LocaleService locale service */
+    protected $localeService;
+    /** @var array dictionary array */
+    protected $dictionary = [];
+    /** @var string plural format */
+    protected $plural = null;
 
 
     /**
-     * TranslatorService constructor.
+     * Translator constructor.
      *
-     * @param LocaleService $languageService
+     * @param LocaleService $localeService
      */
-    protected function __construct(LocaleService $languageService)
+    protected function __construct(LocaleService $localeService)
     {
-        $this->languageService = $languageService;
+        $this->localeService = $localeService;
 
         // example: '$plural=(n==1) ? 0 : ((n>=2 && n<=4) ? 1 : 2);'
         // zdroj: http://docs.translatehouse.org/projects/localization-guide/en/latest/l10n/pluralforms.html
         // predavani pluralu z locales do translatu vzdy pro konkretni jazyk
-        $this->plural = $languageService->getPlural();
+        $this->plural = $localeService->getPlural();
     }
 
 
@@ -72,7 +76,7 @@ abstract class TranslatorService implements ITranslator
                     $n = (is_array($count) ? $count[0] : $count);    // vstupni promenna poctu (pokud je pole, bere index: [0])
                     eval($this->plural);    // samotna evaluace pluralu
                     $pluralFormat = '%s:plural:%d'; // format pluralu
-                    $pluralIndex = sprintf($pluralFormat, $indexDictionary, $plural);//$index . ':plural:' . intval($plural); // slozeni rozsireneho indexu
+                    $pluralIndex = sprintf($pluralFormat, $indexDictionary, $plural);   // slozeni rozsireneho indexu
                     if (!isset($this->dictionary[$pluralIndex])) {
                         // hromadne vkladani plural tvaru podle poctu ($nplurals)
                         if (isset($nplurals)) {
@@ -101,7 +105,7 @@ abstract class TranslatorService implements ITranslator
 
 
     /**
-     * nacitani prekladu
+     * Load translate.
      *
      * @return mixed
      */
@@ -109,7 +113,7 @@ abstract class TranslatorService implements ITranslator
 
 
     /**
-     * ukladani prekladu
+     * Save translate.
      *
      * @param $index
      * @param $message
@@ -119,10 +123,10 @@ abstract class TranslatorService implements ITranslator
 
 
     /**
-     * hledani prekladu podle identu
+     * Search translate by idents.
      *
-     * @param $idents
+     * @param array $idents
      * @return mixed
      */
-    abstract public function searchTranslate($idents);
+    abstract public function searchTranslate(array $idents);
 }

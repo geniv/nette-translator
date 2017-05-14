@@ -1,46 +1,46 @@
 <?php
 
-namespace TranslatorServices\Drivers;
+namespace Translator\Drivers;
 
+use Translator\Translator;
 use LocaleServices\LocaleService;
 use dibi;
 use Dibi\Connection;
-use TranslatorService\TranslatorService;
 use Nette\Caching\Cache;
 use Nette\Caching\IStorage;
 use Exception;
 
 
 /**
- * Class Database
+ * Class DatabaseDriver
  *
  * databazovy translator s podporou Pluralu
  *
  * @author  geniv
- * @package TranslatorServices\Drivers
+ * @package Translator\Drivers
  */
-class Database extends TranslatorService
+class DatabaseDriver extends Translator
 {
     private $cache, $cacheKey, $idLocale;
     protected $database, $tableTranslate, $tableTranslateIdent;
 
 
     /**
-     * Database constructor.
+     * DatabaseDriver constructor.
      *
      * @param array         $parameters
      * @param Connection    $database
-     * @param LocaleService $languageService
+     * @param LocaleService $localeService
      * @param IStorage      $cacheStorage
      * @throws Exception
      */
-    public function __construct(array $parameters, Connection $database, LocaleService $languageService, IStorage $cacheStorage)
+    public function __construct(array $parameters, Connection $database, LocaleService $localeService, IStorage $cacheStorage)
     {
-        parent::__construct($languageService);
+        parent::__construct($localeService);
 
         // pokud parametr table neexistuje
         if (!isset($parameters['table'])) {
-            throw new Exception('Table name is not defined in configure! (table: xy)');
+            throw new Exception('Parameters table name is not defined in configure! (table: xy)');
         }
         // nacteni jmena tabulky
         $tableTranslate = $parameters['table'];
@@ -51,19 +51,19 @@ class Database extends TranslatorService
 
         $this->cache = new Cache($cacheStorage, 'cache' . __CLASS__);
 
-        $this->idLocale = $this->languageService->getId();
+        $this->idLocale = $this->localeService->getId();
         // klic pro cache
         $this->cacheKey = 'dictionary' . $this->idLocale;
 
         // nacteni prekladu
-        $this->initTranslate();
+        $this->loadCache();
     }
 
 
     /**
-     * interni nacitani knihovny prekladu
+     * Internal load cache.
      */
-    private function initTranslate()
+    private function loadCache()
     {
         $this->dictionary = $this->cache->load($this->cacheKey);
         if ($this->dictionary === null) {
@@ -74,20 +74,7 @@ class Database extends TranslatorService
 
 
     /**
-     * hook pro invalidaci cache
-     */
-//    public function hookInvalidateCache()
-//    {
-//        $this->cache->remove($this->cacheKey);  // vynuceni precachovani
-//        // vynuceni precachovani
-//        $this->cache->clean([
-//            Cache::TAGS => ['saveCache'],
-//        ]);
-//    }
-
-
-    /**
-     * interni ukladani cache
+     * Internal save cache.
      */
     protected function saveCache()
     {
@@ -99,7 +86,7 @@ class Database extends TranslatorService
 
 
     /**
-     * nacitani prekladu
+     * Load translate.
      *
      * @return mixed
      */
@@ -114,7 +101,7 @@ class Database extends TranslatorService
 
 
     /**
-     * ukladani prekladu
+     * Save translate.
      *
      * @param $index
      * @param $message
@@ -153,12 +140,12 @@ class Database extends TranslatorService
 
 
     /**
-     * hledani prekladu podle identu
+     * Search translate by idents.
      *
-     * @param $idents
-     * @return mixed
+     * @param array $idents
+     * @return array
      */
-    public function searchTranslate($idents)
+    public function searchTranslate(array $idents)
     {
         $locales = $this->database->select('t.id, b.ident, GROUP_CONCAT(t.id_locale) locales, t.translate')
             ->from($this->tableTranslate)->as('t')
