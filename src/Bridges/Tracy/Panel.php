@@ -3,6 +3,7 @@
 namespace Translator\Bridges\Tracy;
 
 use Latte\Engine;
+use Translator\Translator;
 use Latte\MacroTokens;
 use Latte\Parser;
 use Latte\PhpWriter;
@@ -10,7 +11,6 @@ use Nette\DI\Container;
 use Nette\SmartObject;
 use Tracy\Debugger;
 use Tracy\IBarPanel;
-use Translator\Translator;
 
 
 /**
@@ -72,7 +72,7 @@ class Panel implements IBarPanel
      */
     public function getPanel()
     {
-        $localeService = $this->container->getByType('LocaleServices\LocaleService');   // nacteni lokalizacni sluzby
+        $locale = $this->container->getByType('Locale\Locale');   // nacteni lokalizacni sluzby
         $application = $this->container->getByType('Nette\Application\Application');    // nacteni aplikace
         $presenter = $application->getPresenter();  // nacteni presenteru
 
@@ -85,8 +85,8 @@ class Panel implements IBarPanel
 
         $params = [
             // locales
-            'locales'          => $localeService->getLocales(),
-            'localeCode'       => $localeService->getCode(),
+            'locales'          => $locale->getLocales(),
+            'localeCode'       => $locale->getCode(),
             // translates
             'translateLayout'  => $layoutTranslate,
             'translateContent' => $contentTranslate,
@@ -163,47 +163,5 @@ class Panel implements IBarPanel
         }
 
         return $result;
-    }
-}
-
-
-/**
- * Class TranslateMap
- *
- * vnitrni trida pro mapovani umisteni prekladu v latte
- *
- * @author  geniv
- * @package TranslatorServices\Bridges\Tracy
- */
-class TranslateMap
-{
-    private $list = [];
-
-
-    /**
-     * Insert value.
-     *
-     * @param $key
-     * @param $file
-     * @param $line
-     */
-    public function add($key, $file, $line)
-    {
-        $dirs = explode('/', $file);
-        $this->list[$key] = [
-            'file' => implode('/', array_slice($dirs, -2)), // vrati jen posledni 2 urovne cesty
-            'line' => $line,
-        ];
-    }
-
-
-    /**
-     * Return as array.
-     *
-     * @return array
-     */
-    public function toArray()
-    {
-        return $this->list;
     }
 }

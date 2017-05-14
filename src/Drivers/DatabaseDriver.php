@@ -3,7 +3,7 @@
 namespace Translator\Drivers;
 
 use Translator\Translator;
-use LocaleServices\LocaleService;
+use Locale\Locale;
 use dibi;
 use Dibi\Connection;
 use Nette\Caching\Cache;
@@ -21,22 +21,28 @@ use Exception;
  */
 class DatabaseDriver extends Translator
 {
-    private $cache, $cacheKey, $idLocale;
-    protected $database, $tableTranslate, $tableTranslateIdent;
+    /** @var Cache data cache */
+    private $cache;
+    /** @var string name cache key */
+    private $cacheKey;
+    /** @var Connection database connection from DI */
+    protected $connection;
+    /** @var string tables name */
+    private $tableTranslate, $tableTranslateIdent;
 
 
     /**
      * DatabaseDriver constructor.
      *
-     * @param array         $parameters
-     * @param Connection    $database
-     * @param LocaleService $localeService
-     * @param IStorage      $cacheStorage
+     * @param array      $parameters
+     * @param Connection $connection
+     * @param Locale     $locale
+     * @param IStorage   $cacheStorage
      * @throws Exception
      */
-    public function __construct(array $parameters, Connection $database, LocaleService $localeService, IStorage $cacheStorage)
+    public function __construct(array $parameters, Connection $connection, Locale $locale, IStorage $cacheStorage)
     {
-        parent::__construct($localeService);
+        parent::__construct($locale);
 
         // pokud parametr table neexistuje
         if (!isset($parameters['table'])) {
@@ -45,15 +51,14 @@ class DatabaseDriver extends Translator
         // nacteni jmena tabulky
         $tableTranslate = $parameters['table'];
 
-        $this->database = $database;
+        $this->connection = $connection;
         $this->tableTranslate = $tableTranslate;
         $this->tableTranslateIdent = $tableTranslate . '_ident';
 
         $this->cache = new Cache($cacheStorage, 'cache' . __CLASS__);
 
-        $this->idLocale = $this->localeService->getId();
         // klic pro cache
-        $this->cacheKey = 'dictionary' . $this->idLocale;
+        $this->cacheKey = 'dictionary' . $this->locale->getId();
 
         // nacteni prekladu
         $this->loadCache();
@@ -92,10 +97,10 @@ class DatabaseDriver extends Translator
      */
     protected function loadTranslate()
     {
-        return $this->database->select('t.id, i.ident, t.translate')
+        return $this->connection->select('t.id, i.ident, t.translate')
             ->from($this->tableTranslate)->as('t')
             ->join($this->tableTranslateIdent)->as('i')->on('i.id=t.id_ident')
-            ->where('t.id_locale=%i OR t.id_locale IS NULL', $this->idLocale)
+            ->where('t.id_locale=%i OR t.id_locale IS NULL', $this->locale->getId())
             ->fetchPairs('ident', 'translate');
     }
 
@@ -111,13 +116,13 @@ class DatabaseDriver extends Translator
     {
         $arr = ['ident' => $index];
         // nacte identifikator
-        $identifier = $this->database->select('id')
+        $identifier = $this->connection->select('id')
             ->from($this->tableTranslateIdent)
             ->where($arr)
             ->fetchSingle();
         // pokud se nenajde tak se vlozi novy
         if (!$identifier) {
-            $identifier = $this->database->insert($this->tableTranslateIdent, $arr)
+            $identifier = $this->connection->insert($this->tableTranslateIdent, $arr)
                 ->onDuplicateKeyUpdate('%a', $arr)
                 ->execute(Dibi::IDENTIFIER);
         }
@@ -129,7 +134,7 @@ class DatabaseDriver extends Translator
             'translate' => $message, // ukladani do zkratky jazyka
         ];
 
-        $this->database->insert($this->tableTranslate, $values)
+        $this->connection->insert($this->tableTranslate, $values)
             ->execute();
         $this->dictionary[$index] = $message;   // pridani slozeneho pole do slovniku
         $this->saveCache();
@@ -147,7 +152,7 @@ class DatabaseDriver extends Translator
      */
     public function searchTranslate(array $idents)
     {
-        $locales = $this->database->select('t.id, b.ident, GROUP_CONCAT(t.id_locale) locales, t.translate')
+        $locales = $this->connection->select('t.id, b.ident, GROUP_CONCAT(t.id_locale) locales, t.translate')
             ->from($this->tableTranslate)->as('t')
             ->join($this->tableTranslateIdent)->as('b')->on('b.id=t.id_ident')
             ->where('ident IN %in', $idents)
