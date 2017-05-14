@@ -1,6 +1,6 @@
 <?php
 
-namespace TranslatorServices\Bridges\Nette;
+namespace Translator\Bridges\Nette;
 
 use Nette;
 use Nette\DI\CompilerExtension;
@@ -12,7 +12,7 @@ use Nette\DI\CompilerExtension;
  * nette extension pro zavadeni jazykove sluzby jako rozsireni
  *
  * @author  geniv
- * @package TranslatorServices\Bridges\Nette
+ * @package Translator\Bridges\Nette
  */
 class Extension extends CompilerExtension
 {
@@ -27,20 +27,20 @@ class Extension extends CompilerExtension
 
         switch ($config['source']) {
             case 'DevNull':
-                $translatorService = $builder->addDefinition($this->prefix('default'))
-                    ->setClass('TranslatorServices\Drivers\DevNullDriver')
+                $translator = $builder->addDefinition($this->prefix('default'))
+                    ->setClass('Translator\Drivers\DevNullDriver')
                     ->setInject(false);
                 break;
 
             case 'Database':
-                $translatorService = $builder->addDefinition($this->prefix('default'))
-                    ->setClass('TranslatorServices\Drivers\DatabaseDriver', [$config['parameters']])
+                $translator = $builder->addDefinition($this->prefix('default'))
+                    ->setClass('Translator\Drivers\DatabaseDriver', [$config['parameters']])
                     ->setInject(false);
                 break;
 
             case 'Neon':
-                $translatorService = $builder->addDefinition($this->prefix('default'))
-                    ->setClass('TranslatorServices\Drivers\NeonDriver', [$config['parameters']])
+                $translator = $builder->addDefinition($this->prefix('default'))
+                    ->setClass('Translator\Drivers\NeonDriver', [$config['parameters']])
                     ->setInject(false);
                 break;
         }
@@ -48,9 +48,9 @@ class Extension extends CompilerExtension
         // pokud je debugmod a existuje rozhranni tak aktivuje panel
         if ($builder->parameters['debugMode'] && interface_exists('Tracy\IBarPanel')) {
             $builder->addDefinition($this->prefix('panel'))
-                ->setClass('TranslatorServices\Bridges\Tracy\Panel');
+                ->setClass('Translator\Bridges\Tracy\Panel');
 
-            $translatorService->addSetup('?->register(?)', [$this->prefix('@panel'), '@self']);
+            $translator->addSetup('?->register(?)', [$this->prefix('@panel'), '@self']);
         }
     }
 }

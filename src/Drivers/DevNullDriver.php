@@ -1,8 +1,8 @@
 <?php
 
-namespace TranslatorServices\Drivers;
+namespace Translator\Drivers;
 
-use TranslatorService\TranslatorService;
+use Translator\Translator;
 use LocaleServices\LocaleService;
 
 
@@ -12,9 +12,9 @@ use LocaleServices\LocaleService;
  * /Dev/Null translator s podporou plural substituce a podporou samostatne substituce, bez uloziste
  *
  * @author  geniv
- * @package TranslatorServices\Drivers
+ * @package Translator\Drivers
  */
-class DevNullDriver extends TranslatorService
+class DevNullDriver extends Translator
 {
 
     /**
@@ -38,11 +38,10 @@ class DevNullDriver extends TranslatorService
      */
     public function translate($message, $count = null, $plurals = null)
     {
-        $localePlural = $this->localeService->getPlural();
-        if (isset($localePlural) && isset($count) && isset($plurals)) {
+        if (isset($this->plural) && isset($count) && isset($plurals)) {
             $plural = null; // vystupni promenna typu pluralu
             $n = $count;    // predani poctu polozek
-            eval($localePlural);    // samotna evaluace pluralu
+            eval($this->plural);    // samotna evaluace pluralu
             return sprintf($plurals[$plural], $count);  // vyber spravneho indexu z pole pluralu
         }
 

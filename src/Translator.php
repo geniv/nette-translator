@@ -1,6 +1,6 @@
 <?php
 
-namespace TranslatorService;
+namespace Translator;
 
 use LocaleServices\LocaleService;
 use Nette\Localization\ITranslator;
@@ -9,14 +9,14 @@ use Nette\SmartObject;
 
 
 /**
- * Class TranslatorService
+ * Class Translator
  *
  * abstraktni trida prekladu
  *
  * @author  geniv
- * @package TranslatorService
+ * @package Translator
  */
-abstract class TranslatorService implements ITranslator
+abstract class Translator implements ITranslator
 {
     use SmartObject;
 
@@ -24,11 +24,12 @@ abstract class TranslatorService implements ITranslator
     protected $localeService;
     /** @var array dictionary array */
     protected $dictionary = [];
-    private $plural = null;
+    /** @var string plural format */
+    protected $plural = null;
 
 
     /**
-     * TranslatorService constructor.
+     * Translator constructor.
      *
      * @param LocaleService $localeService
      */

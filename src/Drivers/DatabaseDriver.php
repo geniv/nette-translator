@@ -1,8 +1,8 @@
 <?php
 
-namespace TranslatorServices\Drivers;
+namespace Translator\Drivers;
 
-use TranslatorService\TranslatorService;
+use Translator\Translator;
 use LocaleServices\LocaleService;
 use dibi;
 use Dibi\Connection;
@@ -17,9 +17,9 @@ use Exception;
  * databazovy translator s podporou Pluralu
  *
  * @author  geniv
- * @package TranslatorServices\Drivers
+ * @package Translator\Drivers
  */
-class DatabaseDriver extends TranslatorService
+class DatabaseDriver extends Translator
 {
     private $cache, $cacheKey, $idLocale;
     protected $database, $tableTranslate, $tableTranslateIdent;

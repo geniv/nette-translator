@@ -1,8 +1,8 @@
 <?php
 
-namespace TranslatorServices\Drivers;
+namespace Translator\Drivers;
 
-use TranslatorService\TranslatorService;
+use Translator\Translator;
 use LocaleServices\LocaleService;
 use Nette\Neon\Neon;
 
@@ -13,9 +13,9 @@ use Nette\Neon\Neon;
  * souborovy s podporou Pluralu
  *
  * @author  geniv
- * @package TranslatorServices\Drivers
+ * @package Translator\Drivers
  */
-class NeonDriver extends TranslatorService
+class NeonDriver extends Translator
 {
     /** @var string path to file */
     private $path;
