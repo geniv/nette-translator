@@ -4,7 +4,6 @@ namespace Translator;
 
 use Locale\Locale;
 use Nette\Localization\ITranslator;
-use Nette\Utils\Strings;
 use Nette\SmartObject;
 
 
