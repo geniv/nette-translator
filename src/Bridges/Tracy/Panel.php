@@ -3,6 +3,8 @@
 namespace Translator\Bridges\Tracy;
 
 use Latte\Engine;
+use Locale\Locale;
+use Nette\Application\Application;
 use Translator\Translator;
 use Latte\MacroTokens;
 use Latte\Parser;
@@ -72,8 +74,8 @@ class Panel implements IBarPanel
      */
     public function getPanel()
     {
-        $locale = $this->container->getByType('Locale\Locale');   // nacteni lokalizacni sluzby
-        $application = $this->container->getByType('Nette\Application\Application');    // nacteni aplikace
+        $locale = $this->container->getByType(Locale::class);   // nacteni lokalizacni sluzby
+        $application = $this->container->getByType(Application::class);    // nacteni aplikace
         $presenter = $application->getPresenter();  // nacteni presenteru
 
         $translateMap = new TranslateMap;
