@@ -103,12 +103,22 @@ abstract class Translator implements ITranslator
     }
 
 
+    /**
+     * Manual create translate.
+     *
+     * @param $index
+     * @param $message
+     * @return mixed
+     */
     public function createTranslate($index, $message)
     {
-        if (!isset($this->dictionary[$index])) {
-            $this->saveTranslate($index, $message);
+        if (isset($this->dictionary) && $this->dictionary) {
+            if (!isset($this->dictionary[$index])) {
+                $this->saveTranslate($index, $message);
+            }
+            return $this->dictionary[$index];
         }
-        return $this->dictionary[$index];
+        return $message;
     }
 
 
