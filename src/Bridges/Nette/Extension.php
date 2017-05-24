@@ -3,7 +3,6 @@
 namespace Translator\Bridges\Nette;
 
 use Nette;
-use Nette\Bridges\ApplicationLatte\ILatteFactory;
 use Nette\DI\CompilerExtension;
 use Tracy\IBarPanel;
 use Translator\Bridges\Tracy\Panel;
@@ -53,11 +52,8 @@ class Extension extends CompilerExtension
         }
 
         // pripojeni makra na translator
-        $latteFactoryService = $builder->getByType(ILatteFactory::class) ?: 'nette.latteFactory';
-        if ($builder->hasDefinition($latteFactoryService)) {
-            $latte = $builder->getDefinition($latteFactoryService);
-            $latte->addSetup('addFilter', ['translate', [$this->prefix('@default'), 'translate']]);
-        }
+        $latte = $builder->getDefinition('nette.latteFactory');
+        $latte->addSetup('addFilter', ['translate', [$this->prefix('@default'), 'translate']]);
 
         // pokud je debugmod a existuje rozhranni tak aktivuje panel
         if ($builder->parameters['debugMode'] && interface_exists(IBarPanel::class)) {
