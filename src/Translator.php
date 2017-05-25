@@ -106,20 +106,32 @@ abstract class Translator implements ITranslator
     /**
      * Manual create translate.
      *
-     * @param $index
-     * @param $message
+     * @param      $ident
+     * @param      $message
+     * @param null $idLocale
      * @return mixed
      */
-    public function createTranslate($index, $message)
+    public function createTranslate($ident, $message, $idLocale = null)
     {
         if (isset($this->dictionary) && $this->dictionary) {
-            if (!isset($this->dictionary[$index])) {
-                $this->saveTranslate($index, $message);
+            if (!isset($this->dictionary[$ident]) || $this->dictionary[$ident] != $message) {
+                $this->updateTranslate($ident, $message, $idLocale ?: $this->locale->getId());
             }
-            return $this->dictionary[$index];
+            return $this->dictionary[$ident];
         }
         return $message;
     }
+
+
+    /**
+     * Update translate.
+     *
+     * @param $ident
+     * @param $message
+     * @param $idLocale
+     * @return mixed
+     */
+    abstract protected function updateTranslate($ident, $message, $idLocale);
 
 
     /**
@@ -133,11 +145,11 @@ abstract class Translator implements ITranslator
     /**
      * Save translate.
      *
-     * @param $index
+     * @param $ident
      * @param $message
      * @return mixed
      */
-    abstract protected function saveTranslate($index, $message);
+    abstract protected function saveTranslate($ident, $message);
 
 
     /**
