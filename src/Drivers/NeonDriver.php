@@ -61,14 +61,14 @@ class NeonDriver extends Translator
     /**
      * Save translate.
      *
-     * @param $index
+     * @param $ident
      * @param $message
      * @return mixed
      */
-    protected function saveTranslate($index, $message)
+    protected function saveTranslate($ident, $message)
     {
         //vlozeni prekladu do pole
-        $this->dictionary[$index] = $message;
+        $this->dictionary[$ident] = $message;
         //ulozit do souboru
         file_put_contents($this->path, Neon::encode($this->dictionary, Neon::BLOCK));
         // vraceni textu
@@ -85,5 +85,19 @@ class NeonDriver extends Translator
     public function searchTranslate(array $idents)
     {
         return [];
+    }
+
+
+    /**
+     * Update translate.
+     *
+     * @param $ident
+     * @param $message
+     * @param $idLocale
+     * @return mixed
+     */
+    protected function updateTranslate($ident, $message, $idLocale)
+    {
+        return false;
     }
 }

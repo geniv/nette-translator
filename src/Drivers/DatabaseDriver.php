@@ -37,10 +37,10 @@ class DatabaseDriver extends Translator
      * @param array      $parameters
      * @param Connection $connection
      * @param Locale     $locale
-     * @param IStorage   $cacheStorage
+     * @param IStorage   $storage
      * @throws Exception
      */
-    public function __construct(array $parameters, Connection $connection, Locale $locale, IStorage $cacheStorage)
+    public function __construct(array $parameters, Connection $connection, Locale $locale, IStorage $storage)
     {
         parent::__construct($locale);
 
@@ -55,7 +55,7 @@ class DatabaseDriver extends Translator
         $this->tableTranslate = $tableTranslate;
         $this->tableTranslateIdent = $tableTranslate . '_ident';
 
-        $this->cache = new Cache($cacheStorage, 'cache' . __CLASS__);
+        $this->cache = new Cache($storage, 'cache' . __CLASS__);
 
         // klic pro cache
         $this->cacheKey = 'dictionary' . $this->locale->getId();
@@ -106,41 +106,72 @@ class DatabaseDriver extends Translator
 
 
     /**
+     * Internal get id ident.
+     *
+     * @param $ident
+     * @return mixed
+     */
+    private function getIdIdent($ident)
+    {
+        $result = $this->connection->select('id')
+            ->from($this->tableTranslateIdent)
+            ->where('ident=%s', $ident)
+            ->fetchSingle();
+
+        if (!$result) {
+            $result = $this->connection->insert($this->tableTranslateIdent, [
+                'ident' => $ident,
+            ])->execute(Dibi::IDENTIFIER);
+        }
+        return $result;
+    }
+
+
+    /**
      * Save translate.
      *
-     * @param $index
+     * @param $ident
      * @param $message
      * @return mixed
      */
-    protected function saveTranslate($index, $message)
+    protected function saveTranslate($ident, $message)
     {
-        $arr = ['ident' => $index];
-        // nacte identifikator
-        $identifier = $this->connection->select('id')
-            ->from($this->tableTranslateIdent)
-            ->where($arr)
-            ->fetchSingle();
-        // pokud se nenajde tak se vlozi novy
-        if (!$identifier) {
-            $identifier = $this->connection->insert($this->tableTranslateIdent, $arr)
-                ->onDuplicateKeyUpdate('%a', $arr)
-                ->execute(Dibi::IDENTIFIER);
-        }
-
-        // vklada se bez vazby na jazyk,
         $values = [
             'id_locale' => null,    // prazdna vazba na jazyk => defaultni preklad
-            'id_ident'  => $identifier,      // ukladani identifikatoru
+            'id_ident'  => $this->getIdIdent($ident),      // ukladani identifikatoru
             'translate' => $message, // ukladani do zkratky jazyka
         ];
 
-        $this->connection->insert($this->tableTranslate, $values)
-            ->execute();
-        $this->dictionary[$index] = $message;   // pridani slozeneho pole do slovniku
+        $this->connection->insert($this->tableTranslate, $values)->execute();
+
+        $this->dictionary[$ident] = $message;   // pridani slozeneho pole do slovniku
         $this->saveCache();
 
         // vraceni textu
         return $message;
+    }
+
+
+    /**
+     * Update translate.
+     *
+     * @param $ident
+     * @param $message
+     * @param $idLocale
+     * @return mixed
+     */
+    protected function updateTranslate($ident, $message, $idLocale)
+    {
+        $values = [
+            'id_locale' => $idLocale,
+            'id_ident'  => $this->getIdIdent($ident),      // ukladani identifikatoru
+            'translate' => $message, // ukladani do zkratky jazyka
+        ];
+
+        $this->connection->insert($this->tableTranslate, $values)->onDuplicateKeyUpdate('%a', $values)->execute();
+
+        $this->dictionary[$ident] = $message;   // pridani slozeneho pole do slovniku
+        $this->saveCache();
     }
 
 
