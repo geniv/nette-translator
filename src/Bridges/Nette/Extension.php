@@ -2,6 +2,7 @@
 
 namespace Translator\Bridges\Nette;
 
+use Exception;
 use Nette;
 use Nette\DI\CompilerExtension;
 use Tracy\IBarPanel;
@@ -29,6 +30,10 @@ class Extension extends CompilerExtension
     {
         $builder = $this->getContainerBuilder();
         $config = $this->getConfig();
+
+        if (!isset($config['parameters'])) {
+            throw new Exception('Parameters is not defined! (' . $this->name . ':{parameters: {...}})');
+        }
 
         // vytvoreni instalce
         switch ($config['source']) {
