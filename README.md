@@ -1,6 +1,9 @@
 Translator
 ==========
 
+This translator is target for save ident in message, also default text is for id_locale=NULL, 
+next language must be translate manual.
+
 Installation
 ------------
 
@@ -62,10 +65,12 @@ presenters:
 /** @var ITranslator @inject */
 public $translator;
 
+// nastaveni na formular
 $form = new \Nette\Application\UI\Form;
 $form->setTranslator($this->translator);
 ```
 or
 ```php
+// prelozeni textu
 $this->translator->translate('message-ident');
 ```
