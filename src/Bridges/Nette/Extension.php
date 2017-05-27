@@ -3,7 +3,6 @@
 namespace Translator\Bridges\Nette;
 
 use Exception;
-use Nette;
 use Nette\DI\CompilerExtension;
 use Tracy\IBarPanel;
 use Translator\Bridges\Tracy\Panel;
