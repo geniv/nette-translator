@@ -56,7 +56,7 @@ class Extension extends CompilerExtension
         }
 
         // pripojeni makra na translator
-        $builder->getDefinition('nette.latteFactory')
+        $builder->getDefinition('latte.latteFactory')
             ->addSetup('addFilter', ['translate', [$this->prefix('@default'), 'translate']]);
 
         // pokud je debugmod a existuje rozhranni tak aktivuje panel
