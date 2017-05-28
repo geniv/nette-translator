@@ -2,9 +2,7 @@
 
 namespace Translator\Bridges\Nette;
 
-use Exception;
 use Nette\DI\CompilerExtension;
-use Tracy\IBarPanel;
 use Translator\Bridges\Tracy\Panel;
 use Translator\Drivers\DatabaseDriver;
 use Translator\Drivers\DevNullDriver;
@@ -21,6 +19,13 @@ use Translator\Drivers\NeonDriver;
  */
 class Extension extends CompilerExtension
 {
+    /** @var array vychozi hodnoty */
+    private $defaults = [
+        'source' => 'DevNull',
+        'table'  => null,
+        'path'   => null,
+    ];
+
 
     /**
      * Load configuration.
@@ -28,27 +33,23 @@ class Extension extends CompilerExtension
     public function loadConfiguration()
     {
         $builder = $this->getContainerBuilder();
-        $config = $this->getConfig();
-
-        if (!isset($config['parameters'])) {
-            throw new Exception('Parameters is not defined! (' . $this->name . ':{parameters: {...}})');
-        }
+        $config = $this->validateConfig($this->defaults);
 
         // definice driveru
         switch ($config['source']) {
             case 'DevNull':
-                $translator = $builder->addDefinition($this->prefix('default'))
+                $builder->addDefinition($this->prefix('default'))
                     ->setClass(DevNullDriver::class);
                 break;
 
             case 'Database':
-                $translator = $builder->addDefinition($this->prefix('default'))
-                    ->setClass(DatabaseDriver::class, [$config['parameters']]);
+                $builder->addDefinition($this->prefix('default'))
+                    ->setClass(DatabaseDriver::class, [$config]);
                 break;
 
             case 'Neon':
-                $translator = $builder->addDefinition($this->prefix('default'))
-                    ->setClass(NeonDriver::class, [$config['parameters']]);
+                $builder->addDefinition($this->prefix('default'))
+                    ->setClass(NeonDriver::class, [$config]);
                 break;
         }
 

@@ -36,11 +36,9 @@ neon configure:
 translator:
 #   source: "DevNull"
     source: "Database"
-    parameters:
     table: %tb_translation%
 #   source: "Neon"
-#   parameters:
-#       path: %appDir%
+#   path: %appDir%
 ```
 
 neon configure extension:
@@ -57,7 +55,7 @@ usage:
 
 latte translate with devnull source
 ```latte
-{_'preklad', $pocet, ['%s 0x', '%s 1x', '%s 2+x']}
+{_'preklad', $pocet, ['%s 0x', '%s 1x', '%s 2x+']}
 ```
 
 presenters:

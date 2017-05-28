@@ -98,6 +98,6 @@ class NeonDriver extends Translator
      */
     protected function updateTranslate($ident, $message, $idLocale)
     {
-        return false;
+        $this->saveTranslate($ident, $message);
     }
 }
