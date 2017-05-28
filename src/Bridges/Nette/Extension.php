@@ -34,7 +34,7 @@ class Extension extends CompilerExtension
             throw new Exception('Parameters is not defined! (' . $this->name . ':{parameters: {...}})');
         }
 
-        // vytvoreni instalce
+        // definice driveru
         switch ($config['source']) {
             case 'DevNull':
                 $translator = $builder->addDefinition($this->prefix('default'))
@@ -52,16 +52,25 @@ class Extension extends CompilerExtension
                 break;
         }
 
-        // pripojeni makra na translator
+        // definice panelu
+        $builder->addDefinition($this->prefix('panel'))
+            ->setClass(Panel::class);
+    }
+
+
+    /**
+     * Before Compile.
+     */
+    public function beforeCompile()
+    {
+        $builder = $this->getContainerBuilder();
+
+        // pripojeni fitru do latte
         $builder->getDefinition('latte.latteFactory')
             ->addSetup('addFilter', ['translate', [$this->prefix('@default'), 'translate']]);
 
-        // pokud je debugmod a existuje rozhranni tak aktivuje panel
-        if ($builder->parameters['debugMode'] && interface_exists(IBarPanel::class)) {
-            $builder->addDefinition($this->prefix('panel'))
-                ->setClass(Panel::class);
-
-            $translator->addSetup('?->register(?)', [$this->prefix('@panel'), '@self']);
-        }
+        // pripojeni panelu do tracy
+        $builder->getDefinition($this->prefix('default'))
+            ->addSetup('?->register(?)', [$this->prefix('@panel'), '@self']);
     }
 }
