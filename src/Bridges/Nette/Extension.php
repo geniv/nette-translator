@@ -2,9 +2,7 @@
 
 namespace Translator\Bridges\Nette;
 
-use Nette;
 use Nette\DI\CompilerExtension;
-use Tracy\IBarPanel;
 use Translator\Bridges\Tracy\Panel;
 use Translator\Drivers\DatabaseDriver;
 use Translator\Drivers\DevNullDriver;
@@ -21,6 +19,13 @@ use Translator\Drivers\NeonDriver;
  */
 class Extension extends CompilerExtension
 {
+    /** @var array vychozi hodnoty */
+    private $defaults = [
+        'source' => 'DevNull',
+        'table'  => null,
+        'path'   => null,
+    ];
+
 
     /**
      * Load configuration.
@@ -28,39 +33,45 @@ class Extension extends CompilerExtension
     public function loadConfiguration()
     {
         $builder = $this->getContainerBuilder();
-        $config = $this->getConfig();
+        $config = $this->validateConfig($this->defaults);
 
-        // vytvoreni instalce
+        // definice driveru
         switch ($config['source']) {
             case 'DevNull':
-                $translator = $builder->addDefinition($this->prefix('default'))
-                    ->setClass(DevNullDriver::class)
-                    ->setInject(false);
+                $builder->addDefinition($this->prefix('default'))
+                    ->setClass(DevNullDriver::class);
                 break;
 
             case 'Database':
-                $translator = $builder->addDefinition($this->prefix('default'))
-                    ->setClass(DatabaseDriver::class, [$config['parameters']])
-                    ->setInject(false);
+                $builder->addDefinition($this->prefix('default'))
+                    ->setClass(DatabaseDriver::class, [$config]);
                 break;
 
             case 'Neon':
-                $translator = $builder->addDefinition($this->prefix('default'))
-                    ->setClass(NeonDriver::class, [$config['parameters']])
-                    ->setInject(false);
+                $builder->addDefinition($this->prefix('default'))
+                    ->setClass(NeonDriver::class, [$config]);
                 break;
         }
 
-        // pripojeni makra na translator
-        $latte = $builder->getDefinition('nette.latteFactory');
-        $latte->addSetup('addFilter', ['translate', [$this->prefix('@default'), 'translate']]);
+        // definice panelu
+        $builder->addDefinition($this->prefix('panel'))
+            ->setClass(Panel::class);
+    }
 
-        // pokud je debugmod a existuje rozhranni tak aktivuje panel
-        if ($builder->parameters['debugMode'] && interface_exists(IBarPanel::class)) {
-            $builder->addDefinition($this->prefix('panel'))
-                ->setClass(Panel::class);
 
-            $translator->addSetup('?->register(?)', [$this->prefix('@panel'), '@self']);
-        }
+    /**
+     * Before Compile.
+     */
+    public function beforeCompile()
+    {
+        $builder = $this->getContainerBuilder();
+
+        // pripojeni fitru do latte
+        $builder->getDefinition('latte.latteFactory')
+            ->addSetup('addFilter', ['translate', [$this->prefix('@default'), 'translate']]);
+
+        // pripojeni panelu do tracy
+        $builder->getDefinition($this->prefix('default'))
+            ->addSetup('?->register(?)', [$this->prefix('@panel'), '@self']);
     }
 }

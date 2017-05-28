@@ -1,12 +1,12 @@
 <h1>{$translateClass}</h1>
 <div class="tracy-inner">
     <table class="table">
-        <caption>Layout translate</caption>
+        <caption>Layout latte translate</caption>
         <thead>
         <tr>
             <th>Ident</th>
             {ifset $locales}
-                <th n:foreach="$locales as $locale" {if $locale['code']==$localeCode}class="active"{/if}>{$locale['code']}</th>
+                <th n:foreach="$locales as $locale" n:class="$locale['code']==$localeCode?active">{$locale['code']}</th>
             {/ifset}
             <th>File</th>
             <th>Line</th>
@@ -21,16 +21,19 @@
             <td>{$translatesMap[$translate]['file']}</td>
             <td>{$translatesMap[$translate]['line']}</td>
         </tr>
+        <tr n:if="$iterations==0">
+            <td colspan="{count($locales)+3}" style="text-align: center;">No translate</td>
+        </tr>
         </tbody>
     </table>
 
     <table class="table">
-        <caption>Content translate</caption>
+        <caption>Content latte translate</caption>
         <thead>
         <tr>
             <th>Ident</th>
             {ifset $locales}
-                <th n:foreach="$locales as $locale" {if $locale['code']==$localeCode}class="active"{/if}>{$locale['code']}</th>
+                <th n:foreach="$locales as $locale" n:class="$locale['code']==$localeCode?active">{$locale['code']}</th>
             {/ifset}
             <th>File</th>
             <th>Line</th>
@@ -44,6 +47,9 @@
             {/ifset}
             <td>{$translatesMap[$translate]['file']}</td>
             <td>{$translatesMap[$translate]['line']}</td>
+        </tr>
+        <tr n:if="$iterations==0">
+            <td colspan="{count($locales)+3}" style="text-align: center;">No translate</td>
         </tr>
         </tbody>
     </table>
