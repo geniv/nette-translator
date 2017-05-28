@@ -56,8 +56,8 @@ class Extension extends CompilerExtension
         }
 
         // pripojeni makra na translator
-        $latte = $builder->getDefinition('nette.latteFactory');
-        $latte->addSetup('addFilter', ['translate', [$this->prefix('@default'), 'translate']]);
+        $builder->getDefinition('nette.latteFactory')
+            ->addSetup('addFilter', ['translate', [$this->prefix('@default'), 'translate']]);
 
         // pokud je debugmod a existuje rozhranni tak aktivuje panel
         if ($builder->parameters['debugMode'] && interface_exists(IBarPanel::class)) {
