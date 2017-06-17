@@ -34,6 +34,7 @@ neon configure:
 ```neon
 # translator
 translator:
+#   debugger: false
 #   source: "DevNull"
     source: "Database"
     table: %tb_translation%

@@ -21,9 +21,10 @@ class Extension extends CompilerExtension
 {
     /** @var array vychozi hodnoty */
     private $defaults = [
-        'source' => 'DevNull',
-        'table'  => null,
-        'path'   => null,
+        'debugger' => true,
+        'source'   => 'DevNull',
+        'table'    => null,
+        'path'     => null,
     ];
 
 
@@ -65,13 +66,16 @@ class Extension extends CompilerExtension
     public function beforeCompile()
     {
         $builder = $this->getContainerBuilder();
+        $config = $this->validateConfig($this->defaults);
 
         // pripojeni fitru do latte
         $builder->getDefinition('latte.latteFactory')
             ->addSetup('addFilter', ['translate', [$this->prefix('@default'), 'translate']]);
 
-        // pripojeni panelu do tracy
-        $builder->getDefinition($this->prefix('default'))
-            ->addSetup('?->register(?)', [$this->prefix('@panel'), '@self']);
+        if ($config['debugger']) {
+            // pripojeni panelu do tracy
+            $builder->getDefinition($this->prefix('default'))
+                ->addSetup('?->register(?)', [$this->prefix('@panel'), '@self']);
+        }
     }
 }
