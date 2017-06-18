@@ -1,8 +1,7 @@
 <h1>{$translateClass}</h1>
 <div class="tracy-inner">
-    <table class="table">
+    <table>
         <caption>Layout latte translate</caption>
-        <thead>
         <tr>
             <th>Ident</th>
             {ifset $locales}
@@ -11,8 +10,6 @@
             <th>File</th>
             <th>Line</th>
         </tr>
-        </thead>
-        <tbody>
         <tr n:foreach="$translateLayout as $translate">
             <td>{$translate}</td>
             {ifset $locales}
@@ -24,12 +21,10 @@
         <tr n:if="$iterations==0">
             <td colspan="{count($locales)+3}" style="text-align: center;">No translate</td>
         </tr>
-        </tbody>
     </table>
 
-    <table class="table">
+    <table>
         <caption>Content latte translate</caption>
-        <thead>
         <tr>
             <th>Ident</th>
             {ifset $locales}
@@ -38,8 +33,6 @@
             <th>File</th>
             <th>Line</th>
         </tr>
-        </thead>
-        <tbody>
         <tr n:foreach="$translateContent as $translate">
             <td>{$translate}</td>
             {ifset $locales}
@@ -51,6 +44,5 @@
         <tr n:if="$iterations==0">
             <td colspan="{count($locales)+3}" style="text-align: center;">No translate</td>
         </tr>
-        </tbody>
     </table>
 </div>
