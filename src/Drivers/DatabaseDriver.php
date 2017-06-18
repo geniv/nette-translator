@@ -100,7 +100,7 @@ class DatabaseDriver extends Translator
         return $this->connection->select('t.id, i.ident, t.translate')
             ->from($this->tableTranslate)->as('t')
             ->join($this->tableTranslateIdent)->as('i')->on('i.id=t.id_ident')
-            ->where('t.id_locale=%i OR t.id_locale IS NULL', $this->locale->getId())
+            ->where('(%or)', ['t.id_locale' => $this->locale->getId(), 't.id_locale' => null])
             ->fetchPairs('ident', 'translate');
     }
 
@@ -186,7 +186,7 @@ class DatabaseDriver extends Translator
         $locales = $this->connection->select('t.id, b.ident, GROUP_CONCAT(t.id_locale) locales, t.translate')
             ->from($this->tableTranslate)->as('t')
             ->join($this->tableTranslateIdent)->as('b')->on('b.id=t.id_ident')
-            ->where('ident IN %in', $idents)
+            ->where('b.ident IN %in', $idents)
             ->groupBy('b.ident')
             ->fetchPairs('ident', 'locales');
 
