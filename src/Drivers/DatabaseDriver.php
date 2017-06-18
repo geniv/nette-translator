@@ -100,7 +100,7 @@ class DatabaseDriver extends Translator
         return $this->connection->select('t.id, i.ident, t.translate')
             ->from($this->tableTranslate)->as('t')
             ->join($this->tableTranslateIdent)->as('i')->on('i.id=t.id_ident')
-            ->where('(%or)', ['t.id_locale' => $this->locale->getId(), 't.id_locale' => null])
+            ->where('(%or)', ['t.id_locale%i' => $this->locale->getId(), 't.id_locale' => null])
             ->fetchPairs('ident', 'translate');
     }
 
