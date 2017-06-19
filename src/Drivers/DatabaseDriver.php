@@ -55,7 +55,7 @@ class DatabaseDriver extends Translator
         $this->tableTranslate = $tableTranslate;
         $this->tableTranslateIdent = $tableTranslate . '_ident';
 
-        $this->cache = new Cache($storage, 'cache' . __CLASS__);
+        $this->cache = new Cache($storage, 'cache-TranslatorDrivers-DatabaseDriver');
 
         // klic pro cache
         $this->cacheKey = 'dictionary' . $this->locale->getId();
