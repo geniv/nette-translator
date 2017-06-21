@@ -97,10 +97,12 @@ class DatabaseDriver extends Translator
      */
     protected function loadTranslate()
     {
-        return $this->connection->select('t.id, i.ident, t.translate')
+        return $this->connection->select('t.id, i.ident, IFNULL(lo_t.translate, t.translate) translate')
             ->from($this->tableTranslate)->as('t')
             ->join($this->tableTranslateIdent)->as('i')->on('i.id=t.id_ident')
-            ->where('(%or)', ['t.id_locale%i' => $this->locale->getId(), 't.id_locale' => null])
+            ->leftJoin($this->tableTranslate)->as('lo_t')->on('lo_t.id_ident=i.id')->and('lo_t.id_locale=%i', $this->locale->getId())
+            ->where(['t.id_locale' => null])
+            ->groupBy('i.id')
             ->fetchPairs('ident', 'translate');
     }
 
