@@ -49,11 +49,11 @@ class DatabaseDriver extends Translator
     {
         parent::__construct($locale);
 
-        $this->connection = $connection;
         // define table names
         $this->tableTranslate = $parameters['tablePrefix'] . self::TABLE_NAME;
         $this->tableTranslateIdent = $parameters['tablePrefix'] . self::TABLE_NAME_IDENT;
 
+        $this->connection = $connection;
         $this->cache = new Cache($storage, 'cache-TranslatorDrivers-DatabaseDriver');
 
         // klic pro cache
