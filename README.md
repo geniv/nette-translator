@@ -4,6 +4,8 @@ Translator
 This translator is target for save ident in message, also default text is for id_locale=NULL, 
 next language must be translate manual.
 
+Plurals source: http://docs.translatehouse.org/projects/localization-guide/en/latest/l10n/pluralforms.html
+
 Installation
 ------------
 
@@ -37,7 +39,7 @@ translator:
 #   debugger: false
 #   source: "DevNull"
     source: "Database"
-    table: %tb_translation%
+    tablePrefix: %tablePrefix%
 #   source: "Neon"
 #   path: %appDir%
 ```

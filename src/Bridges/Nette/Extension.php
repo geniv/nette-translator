@@ -21,10 +21,10 @@ class Extension extends CompilerExtension
 {
     /** @var array vychozi hodnoty */
     private $defaults = [
-        'debugger' => true,
-        'source'   => 'DevNull',
-        'table'    => null,
-        'path'     => null,
+        'debugger'    => true,
+        'source'      => 'DevNull',
+        'tablePrefix' => null,
+        'path'        => null,
     ];
 
 
