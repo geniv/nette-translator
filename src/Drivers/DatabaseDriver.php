@@ -21,13 +21,18 @@ use Exception;
  */
 class DatabaseDriver extends Translator
 {
+    // define constant table names
+    const
+        TABLE_NAME = 'translation',
+        TABLE_NAME_IDENT = 'translation_ident';
+
     /** @var Cache data cache */
     private $cache;
     /** @var string name cache key */
     private $cacheKey;
     /** @var Connection database connection from DI */
     protected $connection;
-    /** @var string tables name */
+    /** @var string table names */
     private $tableTranslate, $tableTranslateIdent;
 
 
@@ -44,16 +49,10 @@ class DatabaseDriver extends Translator
     {
         parent::__construct($locale);
 
-        // pokud parametr table neexistuje
-        if (!isset($parameters['table'])) {
-            throw new Exception('Parameters table name is not defined in configure! (table: xy)');
-        }
-        // nacteni jmena tabulky
-        $tableTranslate = $parameters['table'];
-
         $this->connection = $connection;
-        $this->tableTranslate = $tableTranslate;
-        $this->tableTranslateIdent = $tableTranslate . '_ident';
+        // define table names
+        $this->tableTranslate = $parameters['tablePrefix'] . self::TABLE_NAME;
+        $this->tableTranslateIdent = $parameters['tablePrefix'] . self::TABLE_NAME_IDENT;
 
         $this->cache = new Cache($storage, 'cache-TranslatorDrivers-DatabaseDriver');
 
