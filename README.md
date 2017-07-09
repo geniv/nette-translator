@@ -17,20 +17,21 @@ or
 "geniv/nette-translator": ">=1.0"
 ```
 
-internal dependency:
+require:
 ```json
+"php": ">=5.6.0",
 "nette/nette": ">=2.4.0",
 "dibi/dibi": ">=3.0.0",
-"geniv/nette-locale": ">=1.0.0"
+"geniv/nette-locale": ">=1.0"
 ```
 
 Include in application
 ----------------------
 
 available source drivers:
-- database (dibi + cache)
-- neon (filesystem)
-- devnull (ignore translate)
+- Database (dibi + cache)
+- Neon (filesystem)
+- DevNull (ignore translate)
 
 neon configure:
 ```neon
@@ -56,9 +57,14 @@ usage:
 {_'preklad', $pocet}
 ```
 
-latte translate with devnull source
+latte translate with devnull source:
 ```latte
 {_'preklad', $pocet, ['%s 0x', '%s 1x', '%s 2x+']}
+```
+
+**this latte macro is not supported, because like index must use be simple string `{_'xyz'}`**:
+```latte
+{_}preklad{/_}
 ```
 
 presenters:
