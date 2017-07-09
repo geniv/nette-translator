@@ -12,8 +12,6 @@ use Translator\Drivers\NeonDriver;
 /**
  * Class Extension
  *
- * nette extension pro zavadeni jazykove sluzby jako rozsireni
- *
  * @author  geniv
  * @package Translator\Bridges\Nette
  */
