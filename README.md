@@ -14,7 +14,7 @@ $ composer require geniv/nette-translator
 ```
 or
 ```json
-"geniv/nette-translator": ">=1.0"
+"geniv/nette-translator": ">=1.0.0"
 ```
 
 require:
