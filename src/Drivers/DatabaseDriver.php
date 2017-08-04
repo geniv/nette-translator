@@ -116,13 +116,13 @@ class DatabaseDriver extends Translator
     {
         $result = $this->connection->select('id')
             ->from($this->tableTranslateIdent)
-            ->where('ident=%s', $ident)
+            ->where(['ident' => $ident])
             ->fetchSingle();
 
         if (!$result) {
             $result = $this->connection->insert($this->tableTranslateIdent, [
                 'ident' => $ident,
-            ])->execute(Dibi::IDENTIFIER);
+            ])->execute();
         }
         return $result;
     }
