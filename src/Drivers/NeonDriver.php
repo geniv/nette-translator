@@ -10,7 +10,7 @@ use Nette\Neon\Neon;
 /**
  * Class NeonDriver
  *
- * souborovy s podporou Pluralu
+ * Filesystem with support plurals.
  *
  * @author  geniv
  * @package Translator\Drivers
@@ -38,7 +38,7 @@ class NeonDriver extends Translator
         // nacteni jmena tabulky
         $path = $parameters['path'];
 
-        // vytvoreni cesty
+        // path
         $this->path = $path . '/dictionary-' . $locale->getCode() . '.neon';
 
         $this->loadTranslate();    // nacteni prekladu

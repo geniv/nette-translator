@@ -8,18 +8,17 @@ use dibi;
 use Dibi\Connection;
 use Nette\Caching\Cache;
 use Nette\Caching\IStorage;
-use Exception;
 
 
 /**
- * Class DatabaseDriver
+ * Class DibiDriver
  *
- * databazovy translator s podporou Pluralu
+ * Dibi translator with support plurals.
  *
  * @author  geniv
  * @package Translator\Drivers
  */
-class DatabaseDriver extends Translator
+class DibiDriver extends Translator
 {
     // define constant table names
     const
@@ -37,13 +36,12 @@ class DatabaseDriver extends Translator
 
 
     /**
-     * DatabaseDriver constructor.
+     * DibiDriver constructor.
      *
      * @param array      $parameters
      * @param Connection $connection
      * @param Locale     $locale
      * @param IStorage   $storage
-     * @throws Exception
      */
     public function __construct(array $parameters, Connection $connection, Locale $locale, IStorage $storage)
     {
@@ -54,9 +52,9 @@ class DatabaseDriver extends Translator
         $this->tableTranslateIdent = $parameters['tablePrefix'] . self::TABLE_NAME_IDENT;
 
         $this->connection = $connection;
-        $this->cache = new Cache($storage, 'cache-TranslatorDrivers-DatabaseDriver');
+        $this->cache = new Cache($storage, 'cache-TranslatorDrivers-DibiDriver');
 
-        // klic pro cache
+        // key for cache
         $this->cacheKey = 'dictionary' . $this->locale->getId();
 
         // nacteni prekladu

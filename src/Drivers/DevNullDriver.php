@@ -9,7 +9,7 @@ use Locale\Locale;
 /**
  * Class DevNullDriver
  *
- * /Dev/Null translator s podporou plural substituce a podporou samostatne substituce, bez uloziste
+ * /Dev/Null translator with support plurals without storage.
  *
  * @author  geniv
  * @package Translator\Drivers
