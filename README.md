@@ -29,8 +29,8 @@ Include in application
 ----------------------
 
 available source drivers:
-- Database (dibi + cache)
-- Neon (filesystem)
+- Dibi (dibi + cache)
+- Neon (filesystem in neon syntax)
 - DevNull (ignore translate)
 
 neon configure:
@@ -39,7 +39,7 @@ neon configure:
 translator:
 #   debugger: false
 #   source: "DevNull"
-    source: "Database"
+    source: "Dibi"
     tablePrefix: %tablePrefix%
 #   source: "Neon"
 #   path: %appDir%
@@ -57,7 +57,7 @@ usage:
 {_'preklad', $pocet}
 ```
 
-latte translate with devnull source:
+latte translate with devnull source for plurals:
 ```latte
 {_'preklad', $pocet, ['%s 0x', '%s 1x', '%s 2x+']}
 ```

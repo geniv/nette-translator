@@ -4,7 +4,7 @@ namespace Translator\Bridges\Nette;
 
 use Nette\DI\CompilerExtension;
 use Translator\Bridges\Tracy\Panel;
-use Translator\Drivers\DatabaseDriver;
+use Translator\Drivers\DibiDriver;
 use Translator\Drivers\DevNullDriver;
 use Translator\Drivers\NeonDriver;
 
@@ -17,10 +17,10 @@ use Translator\Drivers\NeonDriver;
  */
 class Extension extends CompilerExtension
 {
-    /** @var array vychozi hodnoty */
+    /** @var array default values */
     private $defaults = [
         'debugger'    => true,
-        'source'      => 'DevNull',
+        'source'      => 'DevNull', // DevNull|Dibi|Neon
         'tablePrefix' => null,
         'path'        => null,
     ];
@@ -34,16 +34,16 @@ class Extension extends CompilerExtension
         $builder = $this->getContainerBuilder();
         $config = $this->validateConfig($this->defaults);
 
-        // definice driveru
+        // define driveru
         switch ($config['source']) {
             case 'DevNull':
                 $builder->addDefinition($this->prefix('default'))
                     ->setClass(DevNullDriver::class);
                 break;
 
-            case 'Database':
+            case 'Dibi':
                 $builder->addDefinition($this->prefix('default'))
-                    ->setClass(DatabaseDriver::class, [$config]);
+                    ->setClass(DibiDriver::class, [$config]);
                 break;
 
             case 'Neon':
@@ -52,9 +52,11 @@ class Extension extends CompilerExtension
                 break;
         }
 
-        // definice panelu
-        $builder->addDefinition($this->prefix('panel'))
-            ->setClass(Panel::class);
+        // define panel
+        if (isset($config['debugger']) && $config['debugger']) {
+            $builder->addDefinition($this->prefix('panel'))
+                ->setClass(Panel::class);
+        }
     }
 
 
@@ -66,12 +68,12 @@ class Extension extends CompilerExtension
         $builder = $this->getContainerBuilder();
         $config = $this->validateConfig($this->defaults);
 
-        // pripojeni fitru do latte
+        // linked filter to latte
         $builder->getDefinition('latte.latteFactory')
             ->addSetup('addFilter', ['translate', [$this->prefix('@default'), 'translate']]);
 
-        if ($config['debugger']) {
-            // pripojeni panelu do tracy
+        if (isset($config['debugger']) && $config['debugger']) {
+            // linked panel to tracy
             $builder->getDefinition($this->prefix('default'))
                 ->addSetup('?->register(?)', [$this->prefix('@panel'), '@self']);
         }
