@@ -120,7 +120,7 @@ class DibiDriver extends Translator
         if (!$result) {
             $result = $this->connection->insert($this->tableTranslateIdent, [
                 'ident' => $ident,
-            ])->execute();
+            ])->execute(dibi::IDENTIFIER);  // must return last insert ID
         }
         return $result;
     }
