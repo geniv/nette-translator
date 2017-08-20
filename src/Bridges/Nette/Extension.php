@@ -20,6 +20,7 @@ class Extension extends CompilerExtension
     /** @var array default values */
     private $defaults = [
         'debugger'    => true,
+        'autowired'   => null,
         'source'      => 'DevNull', // DevNull|Dibi|Neon
         'tablePrefix' => null,
         'path'        => null,
@@ -50,6 +51,12 @@ class Extension extends CompilerExtension
                 $builder->addDefinition($this->prefix('default'))
                     ->setClass(NeonDriver::class, [$config]);
                 break;
+        }
+
+        // if define autowired then set value
+        if (isset($config['autowired'])) {
+            $builder->getDefinition($this->prefix('default'))
+                ->setAutowired($config['autowired']);
         }
 
         // define panel
