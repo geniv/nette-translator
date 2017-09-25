@@ -58,11 +58,6 @@ usage:
 {_'preklad', $pocet}
 ```
 
-latte translate with devnull source for plurals:
-```latte
-{_'preklad', $pocet, ['%s 0x', '%s 1x', '%s 2x+']}
-```
-
 **this latte macro is not supported, because like index must use be simple string `{_'xyz'}`**:
 ```latte
 {_}preklad{/_}
@@ -81,4 +76,8 @@ or
 ```php
 // prelozeni textu
 $this->translator->translate('message-ident');
+
+$this->translator->translate('message-ident', 123);             // inside %s
+
+$this->translator->translate('message-ident', ['hello', 123]);  // inside %s, %s
 ```

@@ -55,21 +55,7 @@ abstract class Translator implements ITranslator
         $indexDictionary = $message; // jako index je pouzity text ktery odpovida prekladovemu textu
 
         if ($message) {
-            if (!isset($count) || !isset($this->plural)) {   // pokud neni pocet nebo neni plural
-                if (!isset($this->dictionary[$indexDictionary])) {
-                    return $this->saveTranslate($indexDictionary, $message);    // vytvoreni
-                }
-            } else {
-                // obsluha ciste substituce, pokud je count pole, a prvni index je NULL
-                if (isset($count) && is_array($count) && is_null($count[0])) {
-                    if (!isset($this->dictionary[$indexDictionary])) {
-                        return $this->saveTranslate($indexDictionary, $message);    // vytvoreni
-                    } else {
-                        return vsprintf($this->dictionary[$indexDictionary], array_slice($count, 1));    // substitude od 1. indexu
-                    }
-                }
-
-                // obsluha pluralove substituce
+            if (isset($count)) {
                 if (isset($this->plural)) {
                     $plural = null; // vystupni promenna typu pluralu
                     $n = (is_array($count) ? $count[0] : $count);    // vstupni promenna poctu (pokud je pole, bere index: [0])
@@ -95,7 +81,22 @@ abstract class Translator implements ITranslator
                         // substituce parametru
                         return sprintf($this->dictionary[$pluralIndex], $count); // parametr
                     }
+                } else {
+                    if (!isset($this->dictionary[$indexDictionary])) {
+                        return $this->saveTranslate($indexDictionary, $message);    // vytvoreni
+                    }
+
+                    if (is_array($count)) { // pokud je pole pouzije vsprintf
+                        // vicenasobna substituce pole
+                        return vsprintf($this->dictionary[$indexDictionary], $count);    // pole
+                    } else {
+                        return sprintf($this->dictionary[$indexDictionary], $count); // parametr
+                    }
                 }
+            }
+
+            if (!isset($this->dictionary[$indexDictionary])) {
+                return $this->saveTranslate($indexDictionary, $message);    // vytvoreni
             }
             return $this->dictionary[$indexDictionary];
         }
