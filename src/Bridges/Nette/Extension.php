@@ -35,7 +35,7 @@ class Extension extends CompilerExtension
         $builder = $this->getContainerBuilder();
         $config = $this->validateConfig($this->defaults);
 
-        // define driveru
+        // define driver
         switch ($config['source']) {
             case 'DevNull':
                 $builder->addDefinition($this->prefix('default'))
