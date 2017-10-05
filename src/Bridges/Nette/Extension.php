@@ -39,17 +39,17 @@ class Extension extends CompilerExtension
         switch ($config['source']) {
             case 'DevNull':
                 $builder->addDefinition($this->prefix('default'))
-                    ->setClass(DevNullDriver::class);
+                    ->setFactory(DevNullDriver::class);
                 break;
 
             case 'Dibi':
                 $builder->addDefinition($this->prefix('default'))
-                    ->setClass(DibiDriver::class, [$config]);
+                    ->setFactory(DibiDriver::class, [$config]);
                 break;
 
             case 'Neon':
                 $builder->addDefinition($this->prefix('default'))
-                    ->setClass(NeonDriver::class, [$config]);
+                    ->setFactory(NeonDriver::class, [$config]);
                 break;
         }
 
@@ -62,7 +62,7 @@ class Extension extends CompilerExtension
         // define panel
         if (isset($config['debugger']) && $config['debugger']) {
             $builder->addDefinition($this->prefix('panel'))
-                ->setClass(Panel::class);
+                ->setFactory(Panel::class);
         }
     }
 
