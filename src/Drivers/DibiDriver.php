@@ -3,7 +3,7 @@
 namespace Translator\Drivers;
 
 use Translator\Translator;
-use Locale\Locale;
+use Locale\ILocale;
 use dibi;
 use Dibi\Connection;
 use Nette\Caching\Cache;
@@ -40,10 +40,10 @@ class DibiDriver extends Translator
      *
      * @param array      $parameters
      * @param Connection $connection
-     * @param Locale     $locale
+     * @param ILocale    $locale
      * @param IStorage   $storage
      */
-    public function __construct(array $parameters, Connection $connection, Locale $locale, IStorage $storage)
+    public function __construct(array $parameters, Connection $connection, ILocale $locale, IStorage $storage)
     {
         parent::__construct($locale);
 
