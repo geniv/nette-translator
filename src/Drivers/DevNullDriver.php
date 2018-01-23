@@ -3,7 +3,7 @@
 namespace Translator\Drivers;
 
 use Translator\Translator;
-use Locale\Locale;
+use Locale\ILocale;
 
 
 /**
@@ -20,9 +20,9 @@ class DevNullDriver extends Translator
     /**
      * DevNullDriver constructor.
      *
-     * @param Locale $locale
+     * @param ILocale $locale
      */
-    public function __construct(Locale $locale)
+    public function __construct(ILocale $locale)
     {
         parent::__construct($locale);
     }

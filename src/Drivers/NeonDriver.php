@@ -4,7 +4,7 @@ namespace Translator\Drivers;
 
 use Exception;
 use Translator\Translator;
-use Locale\Locale;
+use Locale\ILocale;
 use Nette\Neon\Neon;
 
 
@@ -26,10 +26,10 @@ class NeonDriver extends Translator
      * NeonDriver constructor.
      *
      * @param array  $parameters
-     * @param Locale $locale
+     * @param ILocale $locale
      * @throws Exception
      */
-    public function __construct(array $parameters, Locale $locale)
+    public function __construct(array $parameters, ILocale $locale)
     {
         parent::__construct($locale);
 

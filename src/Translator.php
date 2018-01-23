@@ -2,7 +2,7 @@
 
 namespace Translator;
 
-use Locale\Locale;
+use Locale\ILocale;
 use Nette\Localization\ITranslator;
 use Nette\SmartObject;
 
@@ -19,7 +19,7 @@ abstract class Translator implements ITranslator
 {
     use SmartObject;
 
-    /** @var Locale locale from DI */
+    /** @var ILocale locale from DI */
     protected $locale;
     /** @var array dictionary array */
     protected $dictionary = [];
@@ -30,9 +30,9 @@ abstract class Translator implements ITranslator
     /**
      * Translator constructor.
      *
-     * @param Locale $locale
+     * @param ILocale $locale
      */
-    protected function __construct(Locale $locale)
+    protected function __construct(ILocale $locale)
     {
         $this->locale = $locale;
 
