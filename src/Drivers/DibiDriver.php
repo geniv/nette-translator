@@ -57,7 +57,7 @@ class DibiDriver extends Translator
         // key for cache
         $this->cacheKey = 'dictionary' . $this->locale->getId();
 
-        // nacteni prekladu
+        // load translate
         $this->loadCache();
     }
 
@@ -109,6 +109,7 @@ class DibiDriver extends Translator
      *
      * @param $ident
      * @return mixed
+     * @throws \Dibi\Exception
      */
     private function getIdIdent($ident)
     {
@@ -132,6 +133,7 @@ class DibiDriver extends Translator
      * @param $ident
      * @param $message
      * @return mixed
+     * @throws \Dibi\Exception
      */
     protected function saveTranslate($ident, $message)
     {
@@ -158,6 +160,7 @@ class DibiDriver extends Translator
      * @param $message
      * @param $idLocale
      * @return mixed
+     * @throws \Dibi\Exception
      */
     protected function updateTranslate($ident, $message, $idLocale)
     {

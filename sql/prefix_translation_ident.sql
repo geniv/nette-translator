@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 4.5.4.1deb2ubuntu2
--- http://www.phpmyadmin.net
+-- version 4.6.6deb4
+-- https://www.phpmyadmin.net/
 --
--- Počítač: localhost
--- Vytvořeno: Ned 28. kvě 2017, 23:51
--- Verze serveru: 10.0.29-MariaDB-0ubuntu0.16.04.1
--- Verze PHP: 7.0.15-0ubuntu0.16.04.4
+-- Počítač: localhost:3306
+-- Vytvořeno: Sob 27. led 2018, 20:29
+-- Verze serveru: 10.1.26-MariaDB-0+deb9u1
+-- Verze PHP: 7.0.27-0+deb9u1
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET time_zone = "+00:00";
@@ -27,7 +27,7 @@ SET time_zone = "+00:00";
 --
 
 CREATE TABLE `prefix_translation_ident` (
-  `id` int(11) NOT NULL,
+  `id` bigint(20) UNSIGNED NOT NULL,
   `ident` varchar(100) DEFAULT NULL COMMENT 'identifikator'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='preklady - identy';
 
@@ -50,7 +50,7 @@ ALTER TABLE `prefix_translation_ident`
 -- AUTO_INCREMENT pro tabulku `prefix_translation_ident`
 --
 ALTER TABLE `prefix_translation_ident`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
