@@ -55,13 +55,22 @@ class DevNullDriver extends Translator
 
 
     /**
-     * Load translate.
+     * Update translate.
      *
-     * @return mixed
+     * @param $ident
+     * @param $message
+     * @param $idLocale
+     */
+    protected function updateTranslate($ident, $message, $idLocale)
+    {
+    }
+
+
+    /**
+     * Load translate.
      */
     protected function loadTranslate()
     {
-        return false;
     }
 
 
@@ -70,11 +79,11 @@ class DevNullDriver extends Translator
      *
      * @param $ident
      * @param $message
-     * @return mixed
+     * @return string
      */
     protected function saveTranslate($ident, $message)
     {
-        return false;
+        return $message;
     }
 
 
@@ -82,24 +91,10 @@ class DevNullDriver extends Translator
      * Search translate by idents.
      *
      * @param array $idents
-     * @return mixed
+     * @return array
      */
     public function searchTranslate(array $idents)
     {
         return [];
-    }
-
-
-    /**
-     * Update translate.
-     *
-     * @param $ident
-     * @param $message
-     * @param $idLocale
-     * @return mixed
-     */
-    protected function updateTranslate($ident, $message, $idLocale)
-    {
-        return false;
     }
 }

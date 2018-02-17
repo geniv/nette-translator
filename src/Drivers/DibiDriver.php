@@ -69,7 +69,7 @@ class DibiDriver extends Translator
     {
         $this->dictionary = $this->cache->load($this->cacheKey);
         if ($this->dictionary === null) {
-            $this->dictionary = $this->loadTranslate();
+            $this->loadTranslate();
             $this->saveCache();
         }
     }
@@ -84,23 +84,6 @@ class DibiDriver extends Translator
             Cache::EXPIRE => '30 minutes',
             Cache::TAGS   => ['saveCache'],
         ]);
-    }
-
-
-    /**
-     * Load translate.
-     *
-     * @return mixed
-     */
-    protected function loadTranslate()
-    {
-        return $this->connection->select('t.id, i.ident, IFNULL(lo_t.translate, t.translate) translate')
-            ->from($this->tableTranslate)->as('t')
-            ->join($this->tableTranslateIdent)->as('i')->on('i.id=t.id_ident')
-            ->leftJoin($this->tableTranslate)->as('lo_t')->on('lo_t.id_ident=i.id')->and('lo_t.id_locale=%i', $this->locale->getId())
-            ->where(['t.id_locale' => null])
-            ->groupBy('i.id')
-            ->fetchPairs('ident', 'translate');
     }
 
 
@@ -128,11 +111,49 @@ class DibiDriver extends Translator
 
 
     /**
+     * Update translate.
+     *
+     * @param $ident
+     * @param $message
+     * @param $idLocale
+     * @throws \Dibi\Exception
+     */
+    protected function updateTranslate($ident, $message, $idLocale)
+    {
+        $values = [
+            'id_locale' => $idLocale,
+            'id_ident'  => $this->getIdIdent($ident),      // ukladani identifikatoru
+            'translate' => $message, // ukladani do zkratky jazyka
+        ];
+
+        $this->connection->insert($this->tableTranslate, $values)->onDuplicateKeyUpdate('%a', $values)->execute();
+
+        $this->dictionary[$ident] = $message;   // pridani slozeneho pole do slovniku
+        $this->saveCache();
+    }
+
+
+    /**
+     * Load translate.
+     */
+    protected function loadTranslate()
+    {
+        $this->dictionary = $this->connection->select('t.id, i.ident, IFNULL(lo_t.translate, t.translate) translate')
+            ->from($this->tableTranslate)->as('t')
+            ->join($this->tableTranslateIdent)->as('i')->on('i.id=t.id_ident')
+            ->leftJoin($this->tableTranslate)->as('lo_t')->on('lo_t.id_ident=i.id')->and('lo_t.id_locale=%i', $this->locale->getId())
+            ->where(['t.id_locale' => null])
+            ->groupBy('i.id')
+            ->fetchPairs('ident', 'translate');
+    }
+
+
+    /**
      * Save translate.
      *
      * @param $ident
      * @param $message
-     * @return mixed
+     * @return string
      * @throws \Dibi\Exception
      */
     protected function saveTranslate($ident, $message)
@@ -148,32 +169,7 @@ class DibiDriver extends Translator
         $this->dictionary[$ident] = $message;   // pridani slozeneho pole do slovniku
         $this->saveCache();
 
-        // vraceni textu
-        return $message;
-    }
-
-
-    /**
-     * Update translate.
-     *
-     * @param $ident
-     * @param $message
-     * @param $idLocale
-     * @return mixed
-     * @throws \Dibi\Exception
-     */
-    protected function updateTranslate($ident, $message, $idLocale)
-    {
-        $values = [
-            'id_locale' => $idLocale,
-            'id_ident'  => $this->getIdIdent($ident),      // ukladani identifikatoru
-            'translate' => $message, // ukladani do zkratky jazyka
-        ];
-
-        $this->connection->insert($this->tableTranslate, $values)->onDuplicateKeyUpdate('%a', $values)->execute();
-
-        $this->dictionary[$ident] = $message;   // pridani slozeneho pole do slovniku
-        $this->saveCache();
+        return $message;    // return message
     }
 
 

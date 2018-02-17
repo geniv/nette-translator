@@ -110,7 +110,7 @@ abstract class Translator implements ITranslator
      * @param      $ident
      * @param      $message
      * @param null $idLocale
-     * @return mixed
+     * @return string
      */
     public function createTranslate($ident, $message, $idLocale = null)
     {
@@ -130,15 +130,12 @@ abstract class Translator implements ITranslator
      * @param $ident
      * @param $message
      * @param $idLocale
-     * @return mixed
      */
     abstract protected function updateTranslate($ident, $message, $idLocale);
 
 
     /**
      * Load translate.
-     *
-     * @return mixed
      */
     abstract protected function loadTranslate();
 
@@ -148,7 +145,7 @@ abstract class Translator implements ITranslator
      *
      * @param $ident
      * @param $message
-     * @return mixed
+     * @return string
      */
     abstract protected function saveTranslate($ident, $message);
 
@@ -157,7 +154,7 @@ abstract class Translator implements ITranslator
      * Search translate by idents.
      *
      * @param array $idents
-     * @return mixed
+     * @return array
      */
     abstract public function searchTranslate(array $idents);
 }

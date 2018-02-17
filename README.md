@@ -22,7 +22,8 @@ require:
 "php": ">=5.6.0",
 "nette/nette": ">=2.4.0",
 "dibi/dibi": ">=3.0.0",
-"geniv/nette-locale": ">=1.0.0"
+"geniv/nette-locale": ">=1.0.0",
+"geniv/nette-configurator": ">=1.0.0"
 ```
 
 Include in application
@@ -32,6 +33,7 @@ available source drivers:
 - Dibi (dibi + cache)
 - Neon (filesystem in neon syntax)
 - DevNull (ignore translate)
+- Configurator (configurator dibi + cache storage)
 
 neon configure:
 ```neon
@@ -44,6 +46,7 @@ translator:
     tablePrefix: %tablePrefix%
 #   source: "Neon"
 #   path: %appDir%
+#    source: "Configurator"
 ```
 
 neon configure extension:

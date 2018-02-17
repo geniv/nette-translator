@@ -13,6 +13,29 @@ use Translator\Translator;
  */
 class ConfiguratorDriver extends Translator
 {
+    /** @var Configurator */
+    private $configurator;
+
+
+    /**
+     * ConfiguratorDriver constructor.
+     *
+     * @param array        $parameters
+     * @param ILocale      $locale
+     * @param Configurator $configurator
+     */
+    public function __construct(array $parameters, ILocale $locale, Configurator $configurator)
+    {
+        parent::__construct($locale);
+
+//        dump($locale->getId());
+        $this->configurator = $configurator;
+        //...
+
+        // load translate
+        $this->loadTranslate();
+    }
+
 
     /**
      * Update translate.
@@ -20,7 +43,6 @@ class ConfiguratorDriver extends Translator
      * @param $ident
      * @param $message
      * @param $idLocale
-     * @return mixed
      */
     protected function updateTranslate($ident, $message, $idLocale)
     {
@@ -30,8 +52,6 @@ class ConfiguratorDriver extends Translator
 
     /**
      * Load translate.
-     *
-     * @return mixed
      */
     protected function loadTranslate()
     {
@@ -44,11 +64,12 @@ class ConfiguratorDriver extends Translator
      *
      * @param $ident
      * @param $message
-     * @return mixed
+     * @return string
      */
     protected function saveTranslate($ident, $message)
     {
-        // TODO: Implement saveTranslate() method.
+        $this->configurator->setTranslator($ident, $message);
+        return $message;
     }
 
 
@@ -56,10 +77,11 @@ class ConfiguratorDriver extends Translator
      * Search translate by idents.
      *
      * @param array $idents
-     * @return mixed
+     * @return array
      */
     public function searchTranslate(array $idents)
     {
         // TODO: Implement searchTranslate() method.
+        return [];
     }
 }

@@ -43,14 +43,26 @@ class NeonDriver extends Translator
         // path
         $this->path = $path . '/dictionary-' . $locale->getCode() . '.neon';
 
-        $this->loadTranslate();    // nacteni prekladu
+        // load translate
+        $this->loadTranslate();
+    }
+
+
+    /**
+     * Update translate.
+     *
+     * @param $ident
+     * @param $message
+     * @param $idLocale
+     */
+    protected function updateTranslate($ident, $message, $idLocale)
+    {
+        $this->saveTranslate($ident, $message);
     }
 
 
     /**
      * Load translate.
-     *
-     * @return mixed
      */
     protected function loadTranslate()
     {
@@ -65,7 +77,7 @@ class NeonDriver extends Translator
      *
      * @param $ident
      * @param $message
-     * @return mixed
+     * @return string
      */
     protected function saveTranslate($ident, $message)
     {
@@ -82,24 +94,10 @@ class NeonDriver extends Translator
      * Search translate by idents.
      *
      * @param array $idents
-     * @return mixed
+     * @return array
      */
     public function searchTranslate(array $idents)
     {
         return [];
-    }
-
-
-    /**
-     * Update translate.
-     *
-     * @param $ident
-     * @param $message
-     * @param $idLocale
-     * @return mixed
-     */
-    protected function updateTranslate($ident, $message, $idLocale)
-    {
-        $this->saveTranslate($ident, $message);
     }
 }
