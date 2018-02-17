@@ -2,6 +2,8 @@
 
 namespace Translator\Drivers;
 
+use Configurator;
+use Locale\ILocale;
 use Translator\Translator;
 
 
@@ -55,7 +57,7 @@ class ConfiguratorDriver extends Translator
      */
     protected function loadTranslate()
     {
-        // TODO: Implement loadTranslate() method.
+        $this->dictionary = $this->configurator->loadDataByType('translator');
     }
 
 
