@@ -71,6 +71,7 @@ class Panel implements IBarPanel
      * Renders HTML code for custom panel.
      *
      * @return string
+     * @throws \Latte\CompileException
      */
     public function getPanel()
     {
@@ -108,6 +109,7 @@ class Panel implements IBarPanel
      * @param $file
      * @param $translateMap
      * @return array
+     * @throws \Latte\CompileException
      */
     public function extractFile($file, $translateMap)
     {
@@ -163,7 +165,6 @@ class Panel implements IBarPanel
                 $translateMap->add($message, realpath($file), $token->line);
             }
         }
-
         return $result;
     }
 }

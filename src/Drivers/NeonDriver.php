@@ -25,7 +25,7 @@ class NeonDriver extends Translator
     /**
      * NeonDriver constructor.
      *
-     * @param array  $parameters
+     * @param array   $parameters
      * @param ILocale $locale
      * @throws Exception
      */

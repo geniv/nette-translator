@@ -37,8 +37,8 @@ neon configure:
 ```neon
 # translator
 translator:
-#   debugger: false
-#   autowired: false    # default null, false => disable autowiring (in case multiple linked extension) | self
+#   debugger: true
+#   autowired: true
 #   source: "DevNull"
     source: "Dibi"
     tablePrefix: %tablePrefix%
