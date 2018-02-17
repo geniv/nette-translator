@@ -57,7 +57,8 @@ class ConfiguratorDriver extends Translator
      */
     protected function loadTranslate()
     {
-        $this->dictionary = $this->configurator->loadDataByType('translator');
+        $this->dictionary = $this->configurator->loadDataByType('translator')
+            ->fetchPairs('ident', 'content');
     }
 
 
