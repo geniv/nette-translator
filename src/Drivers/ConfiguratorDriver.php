@@ -22,11 +22,10 @@ class ConfiguratorDriver extends Translator
     /**
      * ConfiguratorDriver constructor.
      *
-     * @param array        $parameters
      * @param ILocale      $locale
      * @param Configurator $configurator
      */
-    public function __construct(array $parameters, ILocale $locale, Configurator $configurator)
+    public function __construct(ILocale $locale, Configurator $configurator)
     {
         parent::__construct($locale);
 
