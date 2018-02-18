@@ -5,6 +5,7 @@ namespace Translator;
 use Locale\ILocale;
 use Nette\Localization\ITranslator;
 use Nette\SmartObject;
+use Nette\Utils\Finder;
 
 
 /**
@@ -35,6 +36,8 @@ abstract class Translator implements ITranslator
     protected function __construct(ILocale $locale)
     {
         $this->locale = $locale;
+
+        $this->searchDefaultTranslate();    //TODO docasne
 
         // example: '$plural=(n==1) ? 0 : ((n>=2 && n<=4) ? 1 : 2);'
         // zdroj: http://docs.translatehouse.org/projects/localization-guide/en/latest/l10n/pluralforms.html
@@ -157,4 +160,12 @@ abstract class Translator implements ITranslator
      * @return array
      */
     abstract public function searchTranslate(array $idents);
+
+
+    public function searchDefaultTranslate()
+    {
+        foreach (Finder::findFiles('*Translation.neon')->from('/var/www/html/NetteWeb') as $file) {
+            dump($file);
+        }
+    }
 }

@@ -32,11 +32,11 @@ class ConfiguratorDriver extends Translator
 
 //        dump($locale->getId());
         $this->configurator = $configurator;
-        //...
 
         // load translate
         $this->loadTranslate();
     }
+//TODO load defatult data!!! system!
 
 
     /**
@@ -57,7 +57,8 @@ class ConfiguratorDriver extends Translator
      */
     protected function loadTranslate()
     {
-        $this->dictionary = $this->configurator->loadDataByType('translator')
+        //TODO toto zahrnout do konfigurace
+        $this->dictionary = $this->configurator->loadDataByType('translation')
             ->fetchPairs('ident', 'content');
     }
 
@@ -71,7 +72,7 @@ class ConfiguratorDriver extends Translator
      */
     protected function saveTranslate($ident, $message)
     {
-        $this->configurator->setTranslator($ident, $message);
+        $this->configurator->setTranslation($ident, $message);
         return $message;
     }
 
