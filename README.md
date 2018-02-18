@@ -41,12 +41,10 @@ neon configure:
 translator:
 #   debugger: true
 #   autowired: true
-#   source: "DevNull"
-    source: "Dibi"
-    tablePrefix: %tablePrefix%
-#   source: "Neon"
-#   path: %appDir%
-#    source: "Configurator"
+#   driver: Translator\Drivers\DevNull
+#   driver: Translator\Drivers\NeonDriver(%appDir%)
+#   driver: Translator\Drivers\DibiDriver(%tablePrefix%)
+    driver: Translator\Drivers\ConfiguratorDriver
 ```
 
 neon configure extension:

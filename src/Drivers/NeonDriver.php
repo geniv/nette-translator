@@ -25,20 +25,12 @@ class NeonDriver extends Translator
     /**
      * NeonDriver constructor.
      *
-     * @param array   $parameters
+     * @param         $path
      * @param ILocale $locale
-     * @throws Exception
      */
-    public function __construct(array $parameters, ILocale $locale)
+    public function __construct($path, ILocale $locale)
     {
         parent::__construct($locale);
-
-        // pokud parametr table neexistuje
-        if (!isset($parameters['path'])) {
-            throw new Exception('Parameters path is not defined in configure! (path: xy)');
-        }
-        // nacteni jmena tabulky
-        $path = $parameters['path'];
 
         // path
         $this->path = $path . '/dictionary-' . $locale->getCode() . '.neon';

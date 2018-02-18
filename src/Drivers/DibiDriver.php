@@ -38,18 +38,18 @@ class DibiDriver extends Translator
     /**
      * DibiDriver constructor.
      *
-     * @param array      $parameters
+     * @param            $prefix
      * @param Connection $connection
      * @param ILocale    $locale
      * @param IStorage   $storage
      */
-    public function __construct(array $parameters, Connection $connection, ILocale $locale, IStorage $storage)
+    public function __construct($prefix, Connection $connection, ILocale $locale, IStorage $storage)
     {
         parent::__construct($locale);
 
         // define table names
-        $this->tableTranslate = $parameters['tablePrefix'] . self::TABLE_NAME;
-        $this->tableTranslateIdent = $parameters['tablePrefix'] . self::TABLE_NAME_IDENT;
+        $this->tableTranslate = $prefix . self::TABLE_NAME;
+        $this->tableTranslateIdent = $prefix . self::TABLE_NAME_IDENT;
 
         $this->connection = $connection;
         $this->cache = new Cache($storage, 'cache-TranslatorDrivers-DibiDriver');
