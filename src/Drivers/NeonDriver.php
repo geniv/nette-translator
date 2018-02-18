@@ -2,10 +2,9 @@
 
 namespace Translator\Drivers;
 
-use Exception;
+use Nette\Neon\Neon;
 use Translator\Translator;
 use Locale\ILocale;
-use Nette\Neon\Neon;
 
 
 /**

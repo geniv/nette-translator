@@ -45,6 +45,7 @@ translator:
 #   driver: Translator\Drivers\NeonDriver(%appDir%)
 #   driver: Translator\Drivers\DibiDriver(%tablePrefix%)
     driver: Translator\Drivers\ConfiguratorDriver
+    path: %appDir%
 ```
 
 neon configure extension:

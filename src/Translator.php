@@ -4,6 +4,7 @@ namespace Translator;
 
 use Locale\ILocale;
 use Nette\Localization\ITranslator;
+use Nette\Neon\Neon;
 use Nette\SmartObject;
 use Nette\Utils\Finder;
 
@@ -26,6 +27,8 @@ abstract class Translator implements ITranslator
     protected $dictionary = [];
     /** @var string plural format */
     protected $plural = null;
+
+    private $path = null;
 
 
     /**
@@ -162,10 +165,16 @@ abstract class Translator implements ITranslator
     abstract public function searchTranslate(array $idents);
 
 
+    public function setPath($path)
+    {
+        $this->path = $path;
+    }
+
+
     public function searchDefaultTranslate()
     {
-        foreach (Finder::findFiles('*Translation.neon')->from('/var/www/html/NetteWeb') as $file) {
-            dump($file);
+        foreach (Finder::findFiles('*Translation.neon')->from($this->path) as $file) {
+            dump(Neon::decode(file_get_contents($file)));
         }
     }
 }

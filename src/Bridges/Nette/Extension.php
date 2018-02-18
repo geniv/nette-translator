@@ -19,6 +19,7 @@ class Extension extends CompilerExtension
         'debugger'  => true,
         'autowired' => true,
         'driver'    => null,
+        'path'      => null,
     ];
 
 
@@ -32,6 +33,7 @@ class Extension extends CompilerExtension
 
         $builder->addDefinition($this->prefix('default'))
             ->setFactory($config['driver'])
+            ->addSetup('setPath', $config['path'])
             ->setAutowired($config['autowired']);
 
         // define panel
