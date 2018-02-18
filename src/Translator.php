@@ -40,8 +40,6 @@ abstract class Translator implements ITranslator
     {
         $this->locale = $locale;
 
-        $this->searchDefaultTranslate();    //TODO docasne
-
         // example: '$plural=(n==1) ? 0 : ((n>=2 && n<=4) ? 1 : 2);'
         // zdroj: http://docs.translatehouse.org/projects/localization-guide/en/latest/l10n/pluralforms.html
         // predavani pluralu z locales do translatu vzdy pro konkretni jazyk
@@ -168,13 +166,16 @@ abstract class Translator implements ITranslator
     public function setPath($path)
     {
         $this->path = $path;
+        $this->searchDefaultTranslate();
     }
 
 
     public function searchDefaultTranslate()
     {
-        foreach (Finder::findFiles('*Translation.neon')->from($this->path) as $file) {
-            dump(Neon::decode(file_get_contents($file)));
+        if ($this->path) {
+            foreach (Finder::findFiles('*Translation.neon')->from($this->path) as $file) {
+                dump(Neon::decode(file_get_contents($file)));
+            }
         }
     }
 }
