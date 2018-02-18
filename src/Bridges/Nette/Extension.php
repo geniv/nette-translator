@@ -33,7 +33,7 @@ class Extension extends CompilerExtension
 
         $builder->addDefinition($this->prefix('default'))
             ->setFactory($config['driver'])
-            ->addSetup('setPath', $config['path'])
+            ->addSetup('setPath', [$config['path']])
             ->setAutowired($config['autowired']);
 
         // define panel
