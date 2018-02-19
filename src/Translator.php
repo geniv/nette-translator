@@ -173,8 +173,13 @@ abstract class Translator implements ITranslator
     public function searchDefaultTranslate()
     {
         if ($this->path) {
+            $messages = [];
             foreach (Finder::findFiles('*Translation.neon')->from($this->path) as $file) {
-                dump(Neon::decode(file_get_contents($file)));
+                $messages = array_merge($messages, Neon::decode(file_get_contents($file)));
+            }
+
+            foreach ($messages as $ident => $message) {
+                $this->saveTranslate($ident, $message);
             }
         }
     }
