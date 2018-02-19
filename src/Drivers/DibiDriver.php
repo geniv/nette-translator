@@ -2,9 +2,9 @@
 
 namespace Translator\Drivers;
 
+use dibi;
 use Translator\Translator;
 use Locale\ILocale;
-use dibi;
 use Dibi\Connection;
 use Nette\Caching\Cache;
 use Nette\Caching\IStorage;
@@ -104,7 +104,7 @@ class DibiDriver extends Translator
         if (!$result) {
             $result = $this->connection->insert($this->tableTranslateIdent, [
                 'ident' => $ident,
-            ])->execute(dibi::IDENTIFIER);  // must return last insert ID
+            ])->execute(Dibi::IDENTIFIER);  // must return last insert ID
         }
         return $result;
     }

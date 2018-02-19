@@ -71,8 +71,7 @@ class ConfiguratorDriver extends Translator
      */
     protected function saveTranslate($ident, $message)
     {
-        $this->configurator->setTranslation($ident, $message);
-        return $message;
+        return $this->configurator->setTranslation($ident, $message);
     }
 
 
