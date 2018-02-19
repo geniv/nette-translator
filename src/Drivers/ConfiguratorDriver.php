@@ -15,6 +15,10 @@ use Translator\Translator;
  */
 class ConfiguratorDriver extends Translator
 {
+    const
+        TRANSLATION_IDENTIFICATION = 'translation';
+    /** @var string */
+    private $identification;
     /** @var Configurator */
     private $configurator;
 
@@ -22,14 +26,15 @@ class ConfiguratorDriver extends Translator
     /**
      * ConfiguratorDriver constructor.
      *
+     * @param string       $identification
      * @param ILocale      $locale
      * @param Configurator $configurator
      */
-    public function __construct(ILocale $locale, Configurator $configurator)
+    public function __construct($identification = '', ILocale $locale, Configurator $configurator)
     {
         parent::__construct($locale);
 
-//        dump($locale->getId());
+        $this->identification = $identification ?: self::TRANSLATION_IDENTIFICATION;
         $this->configurator = $configurator;
 
         // load translate
@@ -57,7 +62,7 @@ class ConfiguratorDriver extends Translator
     protected function loadTranslate()
     {
         //TODO toto zahrnout do konfigurace
-        $this->dictionary = $this->configurator->loadDataByType('translation')
+        $this->dictionary = $this->configurator->loadDataByType($this->identification)
             ->fetchPairs('ident', 'content');
     }
 
@@ -71,7 +76,9 @@ class ConfiguratorDriver extends Translator
      */
     protected function saveTranslate($ident, $message)
     {
-        return $this->configurator->setTranslation($ident, $message);
+
+        $method = 'set' . ucfirst($this->identification);
+        return $this->configurator->$method($ident, $message);
     }
 
 
