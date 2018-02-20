@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Translator\Bridges\Tracy;
 
@@ -59,7 +59,7 @@ class Panel implements IBarPanel
      *
      * @return string
      */
-    public function getTab()
+    public function getTab(): string
     {
         return '<span title="Translator"><img width="16px" height="16px" src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiA/PjxzdmcgaGVpZ2h0PSI0OCIgdmlld0JveD0iMCAwIDQ4IDQ4IiB3aWR0aD0iNDgiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBhdGggZD0iTTAgMGg0OHY0OGgtNDh6IiBmaWxsPSJub25lIi8+PHBhdGggZD0iTTI1Ljc0IDMwLjE1bC01LjA4LTUuMDIuMDYtLjA2YzMuNDgtMy44OCA1Ljk2LTguMzQgNy40Mi0xMy4wNmg1Ljg2di00LjAxaC0xNHYtNGgtNHY0aC0xNHYzLjk4aDIyLjM0Yy0xLjM1IDMuODYtMy40NiA3LjUyLTYuMzQgMTAuNzItMS44Ni0yLjA3LTMuNC00LjMyLTQuNjItNi43aC00YzEuNDYgMy4yNiAzLjQ2IDYuMzQgNS45NiA5LjEybC0xMC4xNyAxMC4wNSAyLjgzIDIuODMgMTAtMTAgNi4yMiA2LjIyIDEuNTItNC4wN3ptMTEuMjYtMTAuMTVoLTRsLTkgMjRoNGwyLjI1LTZoOS41bDIuMjUgNmg0bC05LTI0em0tNS4yNSAxNGwzLjI1LTguNjcgMy4yNSA4LjY3aC02LjV6Ii8+PC9zdmc+" />' .
             'Translator' .
@@ -73,7 +73,7 @@ class Panel implements IBarPanel
      * @return string
      * @throws \Latte\CompileException
      */
-    public function getPanel()
+    public function getPanel(): string
     {
         $locale = $this->container->getByType(Locale::class);   // nacteni lokalizacni sluzby
         $application = $this->container->getByType(Application::class);    // nacteni aplikace
@@ -111,7 +111,7 @@ class Panel implements IBarPanel
      * @return array
      * @throws \Latte\CompileException
      */
-    public function extractFile($file, $translateMap)
+    public function extractFile(string $file, TranslateMap $translateMap): array
     {
         $buffer = null;
         $parser = new Parser();

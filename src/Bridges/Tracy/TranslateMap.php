@@ -1,6 +1,8 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Translator\Bridges\Tracy;
+
+use Nette\SmartObject;
 
 
 /**
@@ -13,6 +15,8 @@ namespace Translator\Bridges\Tracy;
  */
 class TranslateMap
 {
+    use SmartObject;
+
     /** @var array list vales */
     private $list = [];
 
