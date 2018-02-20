@@ -38,12 +38,12 @@ class DibiDriver extends Translator
     /**
      * DibiDriver constructor.
      *
-     * @param            $prefix
+     * @param string     $prefix
      * @param Connection $connection
      * @param ILocale    $locale
      * @param IStorage   $storage
      */
-    public function __construct($prefix, Connection $connection, ILocale $locale, IStorage $storage)
+    public function __construct(string $prefix, Connection $connection, ILocale $locale, IStorage $storage)
     {
         parent::__construct($locale);
 
@@ -63,7 +63,9 @@ class DibiDriver extends Translator
 
 
     /**
-     * Internal load cache.
+     * Load cache.
+     *
+     * @internal
      */
     private function loadCache()
     {
@@ -76,9 +78,11 @@ class DibiDriver extends Translator
 
 
     /**
-     * Internal save cache.
+     * Save cache.
+     *
+     * @internal
      */
-    protected function saveCache()
+    private function saveCache()
     {
         $this->cache->save($this->cacheKey, $this->dictionary, [
             Cache::EXPIRE => '30 minutes',
@@ -88,22 +92,23 @@ class DibiDriver extends Translator
 
 
     /**
-     * Internal get id ident.
+     * Get id identification.
      *
-     * @param $ident
-     * @return mixed
+     * @internal
+     * @param string $identification
+     * @return int
      * @throws \Dibi\Exception
      */
-    private function getIdIdent($ident)
+    private function getIdIdentification(string $identification): int
     {
         $result = $this->connection->select('id')
             ->from($this->tableTranslateIdent)
-            ->where(['ident' => $ident])
+            ->where(['ident' => $identification])
             ->fetchSingle();
 
         if (!$result) {
             $result = $this->connection->insert($this->tableTranslateIdent, [
-                'ident' => $ident,
+                'ident' => $identification,
             ])->execute(Dibi::IDENTIFIER);  // must return last insert ID
         }
         return $result;
@@ -128,24 +133,23 @@ class DibiDriver extends Translator
     /**
      * Save translate.
      *
-     * @param string $ident
+     * @param string $identification
      * @param string $message
      * @param null   $idLocale
      * @return string
      * @throws \Dibi\Exception
      */
-    protected function saveTranslate($ident, $message, $idLocale = null)
+    protected function saveTranslate(string $identification, string $message, $idLocale = null): string
     {
         $values = [
             'id_locale' => $idLocale,    // prazdna vazba na jazyk => defaultni preklad
-            'id_ident'  => $this->getIdIdent($ident),      // ukladani identifikatoru
+            'id_ident'  => $this->getIdIdentification($identification),      // ukladani identifikatoru
             'translate' => $message, // ukladani do zkratky jazyka
         ];
 
-//        $this->connection->insert($this->tableTranslate, $values)->execute();
         $this->connection->insert($this->tableTranslate, $values)->onDuplicateKeyUpdate('%a', $values)->execute();
 
-        $this->dictionary[$ident] = $message;   // pridani slozeneho pole do slovniku
+        $this->dictionary[$identification] = $message;   // pridani slozeneho pole do slovniku
         $this->saveCache();
 
         return $message;    // return message
@@ -153,17 +157,17 @@ class DibiDriver extends Translator
 
 
     /**
-     * Search translate by idents.
+     * Search translate.
      *
-     * @param array $idents
+     * @param array $identifications
      * @return array
      */
-    public function searchTranslate(array $idents)
+    public function searchTranslate(array $identifications): array
     {
         $locales = $this->connection->select('t.id, b.ident, GROUP_CONCAT(t.id_locale) locales, t.translate')
             ->from($this->tableTranslate)->as('t')
             ->join($this->tableTranslateIdent)->as('b')->on('b.id=t.id_ident')
-            ->where('b.ident IN %in', $idents)
+            ->where('b.ident IN %in', $identifications)
             ->groupBy('b.ident')
             ->fetchPairs('ident', 'locales');
 

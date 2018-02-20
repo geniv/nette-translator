@@ -17,17 +17,17 @@ use Locale\ILocale;
  */
 class NeonDriver extends Translator
 {
-    /** @var string path to file */
+    /** @var string */
     private $path;
 
 
     /**
      * NeonDriver constructor.
      *
-     * @param         $path
+     * @param string  $path
      * @param ILocale $locale
      */
-    public function __construct($path, ILocale $locale)
+    public function __construct(string $path, ILocale $locale)
     {
         parent::__construct($locale);
 
@@ -53,15 +53,15 @@ class NeonDriver extends Translator
     /**
      * Save translate.
      *
-     * @param string $ident
+     * @param string $identification
      * @param string $message
      * @param null   $idLocale
      * @return string
      */
-    protected function saveTranslate($ident, $message, $idLocale = null)
+    protected function saveTranslate(string $identification, string $message, $idLocale = null): string
     {
         //vlozeni prekladu do pole
-        $this->dictionary[$ident] = $message;
+        $this->dictionary[$identification] = $message;
         //ulozit do souboru
         file_put_contents($this->path, Neon::encode($this->dictionary, Neon::BLOCK));
         // vraceni textu
@@ -70,12 +70,12 @@ class NeonDriver extends Translator
 
 
     /**
-     * Search translate by idents.
+     * Search translate.
      *
-     * @param array $idents
+     * @param array $identifications
      * @return array
      */
-    public function searchTranslate(array $idents)
+    public function searchTranslate(array $identifications): array
     {
         return [];
     }

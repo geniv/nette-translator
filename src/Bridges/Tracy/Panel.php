@@ -111,7 +111,7 @@ class Panel implements IBarPanel
      * @return array
      * @throws \Latte\CompileException
      */
-    public function extractFile(string $file, TranslateMap $translateMap): array
+    private function extractFile(string $file, TranslateMap $translateMap): array
     {
         $buffer = null;
         $parser = new Parser();

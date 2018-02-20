@@ -17,6 +17,7 @@ class ConfiguratorDriver extends Translator
 {
     const
         TRANSLATION_IDENTIFICATION = 'translation';
+
     /** @var string */
     private $identification;
     /** @var Configurator */
@@ -47,7 +48,6 @@ class ConfiguratorDriver extends Translator
      */
     protected function loadTranslate()
     {
-        //TODO toto zahrnout do konfigurace
         $this->dictionary = $this->configurator->loadDataByType($this->identification)
             ->fetchPairs('ident', 'content');
     }
@@ -56,25 +56,25 @@ class ConfiguratorDriver extends Translator
     /**
      * Save translate.
      *
-     * @param string $ident
+     * @param string $identification
      * @param string $message
      * @param null   $idLocale
      * @return string
      */
-    protected function saveTranslate($ident, $message, $idLocale = null)
+    protected function saveTranslate(string $identification, string $message, $idLocale = null): string
     {
         $method = 'set' . ucfirst($this->identification);
-        return $this->configurator->$method($ident, $message);
+        return $this->configurator->$method($identification, $message);
     }
 
 
     /**
-     * Search translate by idents.
+     * Search translate.
      *
-     * @param array $idents
+     * @param array $identifications
      * @return array
      */
-    public function searchTranslate(array $idents)
+    public function searchTranslate(array $identifications): array
     {
         //TODO toto by mohli jit implementovat!?!
         // TODO: Implement searchTranslate() method.

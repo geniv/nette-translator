@@ -65,24 +65,24 @@ class DevNullDriver extends Translator
     /**
      * Save translate.
      *
-     * @param string $ident
+     * @param string $identification
      * @param string $message
      * @param null   $idLocale
      * @return string
      */
-    protected function saveTranslate($ident, $message, $idLocale = null)
+    protected function saveTranslate(string $identification, string $message, $idLocale = null): string
     {
         return $message;
     }
 
 
     /**
-     * Search translate by idents.
+     * Search translate.
      *
-     * @param array $idents
+     * @param array $identifications
      * @return array
      */
-    public function searchTranslate(array $idents)
+    public function searchTranslate(array $identifications): array
     {
         return [];
     }
