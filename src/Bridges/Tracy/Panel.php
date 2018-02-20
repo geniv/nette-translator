@@ -104,10 +104,10 @@ class Panel implements IBarPanel
 
 
     /**
-     * Extracts translation messages from a file.
+     * Extract file.
      *
-     * @param $file
-     * @param $translateMap
+     * @param string       $file
+     * @param TranslateMap $translateMap
      * @return array
      * @throws \Latte\CompileException
      */
