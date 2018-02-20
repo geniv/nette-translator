@@ -55,18 +55,6 @@ class DevNullDriver extends Translator
 
 
     /**
-     * Update translate.
-     *
-     * @param $ident
-     * @param $message
-     * @param $idLocale
-     */
-    protected function updateTranslate($ident, $message, $idLocale)
-    {
-    }
-
-
-    /**
      * Load translate.
      */
     protected function loadTranslate()
@@ -77,11 +65,12 @@ class DevNullDriver extends Translator
     /**
      * Save translate.
      *
-     * @param $ident
-     * @param $message
+     * @param string $ident
+     * @param string $message
+     * @param null   $idLocale
      * @return string
      */
-    protected function saveTranslate($ident, $message)
+    protected function saveTranslate($ident, $message, $idLocale = null)
     {
         return $message;
     }

@@ -40,20 +40,6 @@ class ConfiguratorDriver extends Translator
         // load translate
         $this->loadTranslate();
     }
-//TODO load defatult data!!! system!
-
-
-    /**
-     * Update translate.
-     *
-     * @param $ident
-     * @param $message
-     * @param $idLocale
-     */
-    protected function updateTranslate($ident, $message, $idLocale)
-    {
-        // TODO: Implement updateTranslate() method.
-    }
 
 
     /**
@@ -70,13 +56,13 @@ class ConfiguratorDriver extends Translator
     /**
      * Save translate.
      *
-     * @param $ident
-     * @param $message
+     * @param string $ident
+     * @param string $message
+     * @param null   $idLocale
      * @return string
      */
-    protected function saveTranslate($ident, $message)
+    protected function saveTranslate($ident, $message, $idLocale = null)
     {
-
         $method = 'set' . ucfirst($this->identification);
         return $this->configurator->$method($ident, $message);
     }
@@ -90,6 +76,7 @@ class ConfiguratorDriver extends Translator
      */
     public function searchTranslate(array $idents)
     {
+        //TODO toto by mohli jit implementovat!?!
         // TODO: Implement searchTranslate() method.
         return [];
     }

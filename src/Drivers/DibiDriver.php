@@ -111,29 +111,6 @@ class DibiDriver extends Translator
 
 
     /**
-     * Update translate.
-     *
-     * @param $ident
-     * @param $message
-     * @param $idLocale
-     * @throws \Dibi\Exception
-     */
-    protected function updateTranslate($ident, $message, $idLocale)
-    {
-        $values = [
-            'id_locale' => $idLocale,
-            'id_ident'  => $this->getIdIdent($ident),      // ukladani identifikatoru
-            'translate' => $message, // ukladani do zkratky jazyka
-        ];
-
-        $this->connection->insert($this->tableTranslate, $values)->onDuplicateKeyUpdate('%a', $values)->execute();
-
-        $this->dictionary[$ident] = $message;   // pridani slozeneho pole do slovniku
-        $this->saveCache();
-    }
-
-
-    /**
      * Load translate.
      */
     protected function loadTranslate()
@@ -151,20 +128,22 @@ class DibiDriver extends Translator
     /**
      * Save translate.
      *
-     * @param $ident
-     * @param $message
+     * @param string $ident
+     * @param string $message
+     * @param null   $idLocale
      * @return string
      * @throws \Dibi\Exception
      */
-    protected function saveTranslate($ident, $message)
+    protected function saveTranslate($ident, $message, $idLocale = null)
     {
         $values = [
-            'id_locale' => null,    // prazdna vazba na jazyk => defaultni preklad
+            'id_locale' => $idLocale,    // prazdna vazba na jazyk => defaultni preklad
             'id_ident'  => $this->getIdIdent($ident),      // ukladani identifikatoru
             'translate' => $message, // ukladani do zkratky jazyka
         ];
 
-        $this->connection->insert($this->tableTranslate, $values)->execute();
+//        $this->connection->insert($this->tableTranslate, $values)->execute();
+        $this->connection->insert($this->tableTranslate, $values)->onDuplicateKeyUpdate('%a', $values)->execute();
 
         $this->dictionary[$ident] = $message;   // pridani slozeneho pole do slovniku
         $this->saveCache();

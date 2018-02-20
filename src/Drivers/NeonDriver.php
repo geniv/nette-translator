@@ -40,19 +40,6 @@ class NeonDriver extends Translator
 
 
     /**
-     * Update translate.
-     *
-     * @param $ident
-     * @param $message
-     * @param $idLocale
-     */
-    protected function updateTranslate($ident, $message, $idLocale)
-    {
-        $this->saveTranslate($ident, $message);
-    }
-
-
-    /**
      * Load translate.
      */
     protected function loadTranslate()
@@ -66,11 +53,12 @@ class NeonDriver extends Translator
     /**
      * Save translate.
      *
-     * @param $ident
-     * @param $message
+     * @param string $ident
+     * @param string $message
+     * @param null   $idLocale
      * @return string
      */
-    protected function saveTranslate($ident, $message)
+    protected function saveTranslate($ident, $message, $idLocale = null)
     {
         //vlozeni prekladu do pole
         $this->dictionary[$ident] = $message;
