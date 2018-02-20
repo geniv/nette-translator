@@ -1,10 +1,10 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Translator\Drivers;
 
+use dibi;
 use Translator\Translator;
 use Locale\ILocale;
-use dibi;
 use Dibi\Connection;
 use Nette\Caching\Cache;
 use Nette\Caching\IStorage;
@@ -38,18 +38,18 @@ class DibiDriver extends Translator
     /**
      * DibiDriver constructor.
      *
-     * @param array      $parameters
+     * @param string     $prefix
      * @param Connection $connection
      * @param ILocale    $locale
      * @param IStorage   $storage
      */
-    public function __construct(array $parameters, Connection $connection, ILocale $locale, IStorage $storage)
+    public function __construct(string $prefix, Connection $connection, ILocale $locale, IStorage $storage)
     {
         parent::__construct($locale);
 
         // define table names
-        $this->tableTranslate = $parameters['tablePrefix'] . self::TABLE_NAME;
-        $this->tableTranslateIdent = $parameters['tablePrefix'] . self::TABLE_NAME_IDENT;
+        $this->tableTranslate = $prefix . self::TABLE_NAME;
+        $this->tableTranslateIdent = $prefix . self::TABLE_NAME_IDENT;
 
         $this->connection = $connection;
         $this->cache = new Cache($storage, 'cache-TranslatorDrivers-DibiDriver');
@@ -63,22 +63,26 @@ class DibiDriver extends Translator
 
 
     /**
-     * Internal load cache.
+     * Load cache.
+     *
+     * @internal
      */
     private function loadCache()
     {
         $this->dictionary = $this->cache->load($this->cacheKey);
         if ($this->dictionary === null) {
-            $this->dictionary = $this->loadTranslate();
+            $this->loadTranslate();
             $this->saveCache();
         }
     }
 
 
     /**
-     * Internal save cache.
+     * Save cache.
+     *
+     * @internal
      */
-    protected function saveCache()
+    private function saveCache()
     {
         $this->cache->save($this->cacheKey, $this->dictionary, [
             Cache::EXPIRE => '30 minutes',
@@ -88,13 +92,35 @@ class DibiDriver extends Translator
 
 
     /**
-     * Load translate.
+     * Get id identification.
      *
-     * @return mixed
+     * @internal
+     * @param string $identification
+     * @return int
+     * @throws \Dibi\Exception
+     */
+    private function getIdIdentification(string $identification): int
+    {
+        $result = $this->connection->select('id')
+            ->from($this->tableTranslateIdent)
+            ->where(['ident' => $identification])
+            ->fetchSingle();
+
+        if (!$result) {
+            $result = $this->connection->insert($this->tableTranslateIdent, [
+                'ident' => $identification,
+            ])->execute(Dibi::IDENTIFIER);  // must return last insert ID
+        }
+        return $result;
+    }
+
+
+    /**
+     * Load translate.
      */
     protected function loadTranslate()
     {
-        return $this->connection->select('t.id, i.ident, IFNULL(lo_t.translate, t.translate) translate')
+        $this->dictionary = $this->connection->select('t.id, i.ident, IFNULL(lo_t.translate, t.translate) translate')
             ->from($this->tableTranslate)->as('t')
             ->join($this->tableTranslateIdent)->as('i')->on('i.id=t.id_ident')
             ->leftJoin($this->tableTranslate)->as('lo_t')->on('lo_t.id_ident=i.id')->and('lo_t.id_locale=%i', $this->locale->getId())
@@ -105,90 +131,43 @@ class DibiDriver extends Translator
 
 
     /**
-     * Internal get id ident.
-     *
-     * @param $ident
-     * @return mixed
-     * @throws \Dibi\Exception
-     */
-    private function getIdIdent($ident)
-    {
-        $result = $this->connection->select('id')
-            ->from($this->tableTranslateIdent)
-            ->where(['ident' => $ident])
-            ->fetchSingle();
-
-        if (!$result) {
-            $result = $this->connection->insert($this->tableTranslateIdent, [
-                'ident' => $ident,
-            ])->execute(dibi::IDENTIFIER);  // must return last insert ID
-        }
-        return $result;
-    }
-
-
-    /**
      * Save translate.
      *
-     * @param $ident
-     * @param $message
-     * @return mixed
+     * @param string $identification
+     * @param string $message
+     * @param null   $idLocale
+     * @return string
      * @throws \Dibi\Exception
      */
-    protected function saveTranslate($ident, $message)
+    protected function saveTranslate(string $identification, string $message, $idLocale = null): string
     {
         $values = [
-            'id_locale' => null,    // prazdna vazba na jazyk => defaultni preklad
-            'id_ident'  => $this->getIdIdent($ident),      // ukladani identifikatoru
-            'translate' => $message, // ukladani do zkratky jazyka
-        ];
-
-        $this->connection->insert($this->tableTranslate, $values)->execute();
-
-        $this->dictionary[$ident] = $message;   // pridani slozeneho pole do slovniku
-        $this->saveCache();
-
-        // vraceni textu
-        return $message;
-    }
-
-
-    /**
-     * Update translate.
-     *
-     * @param $ident
-     * @param $message
-     * @param $idLocale
-     * @return mixed
-     * @throws \Dibi\Exception
-     */
-    protected function updateTranslate($ident, $message, $idLocale)
-    {
-        $values = [
-            'id_locale' => $idLocale,
-            'id_ident'  => $this->getIdIdent($ident),      // ukladani identifikatoru
+            'id_locale' => $idLocale,    // prazdna vazba na jazyk => defaultni preklad
+            'id_ident'  => $this->getIdIdentification($identification),      // ukladani identifikatoru
             'translate' => $message, // ukladani do zkratky jazyka
         ];
 
         $this->connection->insert($this->tableTranslate, $values)->onDuplicateKeyUpdate('%a', $values)->execute();
 
-        $this->dictionary[$ident] = $message;   // pridani slozeneho pole do slovniku
+        $this->dictionary[$identification] = $message;   // pridani slozeneho pole do slovniku
         $this->saveCache();
+
+        return $message;    // return message
     }
 
 
     /**
-     * Search translate by idents.
+     * Search translate.
      *
-     * @param array $idents
+     * @param array $identifications
      * @return array
      */
-    public function searchTranslate(array $idents)
+    public function searchTranslate(array $identifications): array
     {
         $locales = $this->connection->select('t.id, b.ident, GROUP_CONCAT(t.id_locale) locales, t.translate')
             ->from($this->tableTranslate)->as('t')
             ->join($this->tableTranslateIdent)->as('b')->on('b.id=t.id_ident')
-            ->where('b.ident IN %in', $idents)
+            ->where('b.ident IN %in', $identifications)
             ->groupBy('b.ident')
             ->fetchPairs('ident', 'locales');
 

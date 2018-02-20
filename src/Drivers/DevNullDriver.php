@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Translator\Drivers;
 
@@ -56,50 +56,34 @@ class DevNullDriver extends Translator
 
     /**
      * Load translate.
-     *
-     * @return mixed
      */
     protected function loadTranslate()
     {
-        return false;
     }
 
 
     /**
      * Save translate.
      *
-     * @param $ident
-     * @param $message
-     * @return mixed
+     * @param string $identification
+     * @param string $message
+     * @param null   $idLocale
+     * @return string
      */
-    protected function saveTranslate($ident, $message)
+    protected function saveTranslate(string $identification, string $message, $idLocale = null): string
     {
-        return false;
+        return $message;
     }
 
 
     /**
-     * Search translate by idents.
+     * Search translate.
      *
-     * @param array $idents
-     * @return mixed
+     * @param array $identifications
+     * @return array
      */
-    public function searchTranslate(array $idents)
+    public function searchTranslate(array $identifications): array
     {
         return [];
-    }
-
-
-    /**
-     * Update translate.
-     *
-     * @param $ident
-     * @param $message
-     * @param $idLocale
-     * @return mixed
-     */
-    protected function updateTranslate($ident, $message, $idLocale)
-    {
-        return false;
     }
 }

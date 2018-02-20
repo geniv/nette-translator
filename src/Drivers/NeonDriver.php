@@ -1,11 +1,10 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Translator\Drivers;
 
-use Exception;
+use Nette\Neon\Neon;
 use Translator\Translator;
 use Locale\ILocale;
-use Nette\Neon\Neon;
 
 
 /**
@@ -18,39 +17,30 @@ use Nette\Neon\Neon;
  */
 class NeonDriver extends Translator
 {
-    /** @var string path to file */
+    /** @var string */
     private $path;
 
 
     /**
      * NeonDriver constructor.
      *
-     * @param array  $parameters
+     * @param string  $path
      * @param ILocale $locale
-     * @throws Exception
      */
-    public function __construct(array $parameters, ILocale $locale)
+    public function __construct(string $path, ILocale $locale)
     {
         parent::__construct($locale);
-
-        // pokud parametr table neexistuje
-        if (!isset($parameters['path'])) {
-            throw new Exception('Parameters path is not defined in configure! (path: xy)');
-        }
-        // nacteni jmena tabulky
-        $path = $parameters['path'];
 
         // path
         $this->path = $path . '/dictionary-' . $locale->getCode() . '.neon';
 
-        $this->loadTranslate();    // nacteni prekladu
+        // load translate
+        $this->loadTranslate();
     }
 
 
     /**
      * Load translate.
-     *
-     * @return mixed
      */
     protected function loadTranslate()
     {
@@ -63,14 +53,15 @@ class NeonDriver extends Translator
     /**
      * Save translate.
      *
-     * @param $ident
-     * @param $message
-     * @return mixed
+     * @param string $identification
+     * @param string $message
+     * @param null   $idLocale
+     * @return string
      */
-    protected function saveTranslate($ident, $message)
+    protected function saveTranslate(string $identification, string $message, $idLocale = null): string
     {
         //vlozeni prekladu do pole
-        $this->dictionary[$ident] = $message;
+        $this->dictionary[$identification] = $message;
         //ulozit do souboru
         file_put_contents($this->path, Neon::encode($this->dictionary, Neon::BLOCK));
         // vraceni textu
@@ -79,27 +70,13 @@ class NeonDriver extends Translator
 
 
     /**
-     * Search translate by idents.
+     * Search translate.
      *
-     * @param array $idents
-     * @return mixed
+     * @param array $identifications
+     * @return array
      */
-    public function searchTranslate(array $idents)
+    public function searchTranslate(array $identifications): array
     {
         return [];
-    }
-
-
-    /**
-     * Update translate.
-     *
-     * @param $ident
-     * @param $message
-     * @param $idLocale
-     * @return mixed
-     */
-    protected function updateTranslate($ident, $message, $idLocale)
-    {
-        $this->saveTranslate($ident, $message);
     }
 }

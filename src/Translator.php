@@ -1,16 +1,16 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Translator;
 
 use Locale\ILocale;
 use Nette\Localization\ITranslator;
+use Nette\Neon\Neon;
 use Nette\SmartObject;
+use Nette\Utils\Finder;
 
 
 /**
  * Class Translator
- *
- * abstraktni trida prekladu
  *
  * @author  geniv
  * @package Translator
@@ -19,12 +19,14 @@ abstract class Translator implements ITranslator
 {
     use SmartObject;
 
-    /** @var ILocale locale from DI */
+    /** @var ILocale */
     protected $locale;
-    /** @var array dictionary array */
+    /** @var array */
     protected $dictionary = [];
-    /** @var string plural format */
+    /** @var string */
     protected $plural = null;
+    /** @var string */
+    private $path;
 
 
     /**
@@ -105,40 +107,60 @@ abstract class Translator implements ITranslator
 
 
     /**
-     * Manual create translate.
+     * Set path.
      *
-     * @param      $ident
+     * @param string $path
+     */
+    public function setPath(string $path)
+    {
+        $this->path = $path;
+        $this->searchDefaultTranslate();
+    }
+
+
+    /**
+     * Search default translate.
+     */
+    private function searchDefaultTranslate()
+    {
+        if ($this->path) {
+            $messages = [];
+            // load all default translation files
+            foreach (Finder::findFiles('*Translation.neon')->from($this->path) as $file) {
+                $messages = array_merge($messages, Neon::decode(file_get_contents($file->getPathname())));
+            }
+
+            foreach ($messages as $identification => $message) {
+                if (!isset($this->dictionary[$identification])) {   // save only not exist identification
+                    $this->saveTranslate($identification, $message);    // call only save default value load from files
+                }
+            }
+        }
+    }
+
+
+    /**
+     * Create translate.
+     *
+     * @param      $identification
      * @param      $message
      * @param null $idLocale
-     * @return mixed
+     * @return string
      */
-    public function createTranslate($ident, $message, $idLocale = null)
+    public function createTranslate(string $identification, string $message, $idLocale = null): string
     {
         if (isset($this->dictionary) && $this->dictionary) {
-            if (!isset($this->dictionary[$ident]) || $this->dictionary[$ident] != $message) {
-                $this->updateTranslate($ident, $message, $idLocale ?: $this->locale->getId());
+            if (!isset($this->dictionary[$identification]) || $this->dictionary[$identification] != $message) {
+                $this->saveTranslate($identification, $message, $idLocale ?: $this->locale->getId());
             }
-            return $this->dictionary[$ident];
+            return $this->dictionary[$identification];
         }
         return $message;
     }
 
 
     /**
-     * Update translate.
-     *
-     * @param $ident
-     * @param $message
-     * @param $idLocale
-     * @return mixed
-     */
-    abstract protected function updateTranslate($ident, $message, $idLocale);
-
-
-    /**
      * Load translate.
-     *
-     * @return mixed
      */
     abstract protected function loadTranslate();
 
@@ -146,18 +168,19 @@ abstract class Translator implements ITranslator
     /**
      * Save translate.
      *
-     * @param $ident
-     * @param $message
-     * @return mixed
+     * @param string $identification
+     * @param string $message
+     * @param null   $idLocale
+     * @return string
      */
-    abstract protected function saveTranslate($ident, $message);
+    abstract protected function saveTranslate(string $identification, string $message, $idLocale = null): string;
 
 
     /**
-     * Search translate by idents.
+     * Search translate.
      *
-     * @param array $idents
-     * @return mixed
+     * @param array $identifications
+     * @return array
      */
-    abstract public function searchTranslate(array $idents);
+    abstract public function searchTranslate(array $identifications): array;
 }

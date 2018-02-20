@@ -1,30 +1,34 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Translator\Bridges\Tracy;
+
+use Nette\SmartObject;
 
 
 /**
  * Class TranslateMap
  *
- * vnitrni trida pro mapovani umisteni prekladu v latte
+ * internal class for mapping translation in latte.
  *
  * @author  geniv
  * @package Translator\Bridges\Tracy
  */
 class TranslateMap
 {
-    /** @var array list vales */
+    use SmartObject;
+
+    /** @var array */
     private $list = [];
 
 
     /**
-     * Insert value.
+     * Add.
      *
-     * @param $key
-     * @param $file
-     * @param $line
+     * @param string $key
+     * @param string $file
+     * @param int    $line
      */
-    public function add($key, $file, $line)
+    public function add(string $key, string $file, int $line)
     {
         $dirs = explode('/', $file);
         $this->list[$key] = [
@@ -35,11 +39,11 @@ class TranslateMap
 
 
     /**
-     * Return as array.
+     * To array.
      *
      * @return array
      */
-    public function toArray()
+    public function toArray(): array
     {
         return $this->list;
     }

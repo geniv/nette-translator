@@ -1,12 +1,9 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Translator\Bridges\Nette;
 
 use Nette\DI\CompilerExtension;
 use Translator\Bridges\Tracy\Panel;
-use Translator\Drivers\DibiDriver;
-use Translator\Drivers\DevNullDriver;
-use Translator\Drivers\NeonDriver;
 
 
 /**
@@ -19,11 +16,10 @@ class Extension extends CompilerExtension
 {
     /** @var array default values */
     private $defaults = [
-        'debugger'    => true,
-        'autowired'   => null,
-        'source'      => 'DevNull', // DevNull|Dibi|Neon
-        'tablePrefix' => null,
-        'path'        => null,
+        'debugger'  => true,
+        'autowired' => true,
+        'driver'    => null,
+        'path'      => null,
     ];
 
 
@@ -35,34 +31,16 @@ class Extension extends CompilerExtension
         $builder = $this->getContainerBuilder();
         $config = $this->validateConfig($this->defaults);
 
-        // define driver
-        switch ($config['source']) {
-            case 'DevNull':
-                $builder->addDefinition($this->prefix('default'))
-                    ->setFactory(DevNullDriver::class);
-                break;
-
-            case 'Dibi':
-                $builder->addDefinition($this->prefix('default'))
-                    ->setFactory(DibiDriver::class, [$config]);
-                break;
-
-            case 'Neon':
-                $builder->addDefinition($this->prefix('default'))
-                    ->setFactory(NeonDriver::class, [$config]);
-                break;
-        }
-
-        // if define autowired then set value
-        if (isset($config['autowired'])) {
-            $builder->getDefinition($this->prefix('default'))
-                ->setAutowired($config['autowired']);
-        }
+        $builder->addDefinition($this->prefix('default'))
+            ->setFactory($config['driver'])
+            ->addSetup('setPath', [$config['path']])
+            ->setAutowired($config['autowired']);
 
         // define panel
         if (isset($config['debugger']) && $config['debugger']) {
             $builder->addDefinition($this->prefix('panel'))
-                ->setFactory(Panel::class);
+                ->setFactory(Panel::class)
+                ->setAutowired($config['autowired']);
         }
     }
 

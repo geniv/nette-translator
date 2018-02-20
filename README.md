@@ -19,32 +19,38 @@ or
 
 require:
 ```json
-"php": ">=5.6.0",
+"php": ">=7.0.0",
 "nette/nette": ">=2.4.0",
 "dibi/dibi": ">=3.0.0",
-"geniv/nette-locale": ">=1.0.0"
+"geniv/nette-locale": ">=1.0.0",
+"geniv/nette-configurator": ">=2.0.0"
 ```
 
 Include in application
 ----------------------
 
 available source drivers:
-- Dibi (dibi + cache)
+- Dibi (dibi + cache, self translation db table)
 - Neon (filesystem in neon syntax)
 - DevNull (ignore translate)
+- Configurator (configurator dibi + cache storage)
 
 neon configure:
 ```neon
 # translator
 translator:
-#   debugger: false
-#   autowired: false    # default null, false => disable autowiring (in case multiple linked extension) | self
-#   source: "DevNull"
-    source: "Dibi"
-    tablePrefix: %tablePrefix%
-#   source: "Neon"
-#   path: %appDir%
+#   debugger: true
+#   autowired: true
+#   driver: Translator\Drivers\DevNull
+#   driver: Translator\Drivers\NeonDriver(%appDir%)
+#   driver: Translator\Drivers\DibiDriver(%tablePrefix%)
+    driver: Translator\Drivers\ConfiguratorDriver
+    path: %appDir%
 ```
+
+`path` is configure for system search default translation. 
+Default translation system has name convection `*Translation.neon`, eg: `AppTranslation.neon`
+This neon file has format: `myIndent: MyDefaultMessage`
 
 neon configure extension:
 ```neon
