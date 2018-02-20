@@ -4,6 +4,8 @@ namespace Translator\Drivers;
 
 use Configurator;
 use Locale\ILocale;
+use Nette\Caching\Cache;
+use Nette\Caching\IStorage;
 use Translator\Translator;
 
 
@@ -22,6 +24,10 @@ class ConfiguratorDriver extends Translator
     private $identification;
     /** @var Configurator */
     private $configurator;
+    /** @var Cache */
+    private $cache;
+    /** @var string */
+    private $cacheKey;
 
 
     /**
@@ -30,13 +36,18 @@ class ConfiguratorDriver extends Translator
      * @param string       $identification
      * @param ILocale      $locale
      * @param Configurator $configurator
+     * @param IStorage     $storage
      */
-    public function __construct($identification = '', ILocale $locale, Configurator $configurator)
+    public function __construct($identification = '', ILocale $locale, Configurator $configurator, IStorage $storage)
     {
         parent::__construct($locale);
 
         $this->identification = $identification ?: self::TRANSLATION_IDENTIFICATION;
         $this->configurator = $configurator;
+
+        $this->cache = new Cache($storage, 'cache-TranslatorDrivers-DibiDriver');
+        // key for cache
+        $this->cacheKey = 'dictionary' . $this->locale->getId();
 
         // load translate
         $this->loadTranslate();
@@ -48,8 +59,16 @@ class ConfiguratorDriver extends Translator
      */
     protected function loadTranslate()
     {
-        $this->dictionary = $this->configurator->loadDataByType($this->identification)
-            ->fetchPairs('ident', 'content');
+        $this->dictionary = $this->cache->load('loadTranslate');
+        if ($this->dictionary === null) {
+            $this->dictionary = $this->configurator->loadDataByType($this->identification)
+                ->fetchPairs('ident', 'content');
+
+            $this->cache->save('loadTranslate', $this->dictionary, [
+                Cache::EXPIRE => '30 minutes',
+                Cache::TAGS   => ['saveCache'],
+            ]);
+        }
     }
 
 
@@ -76,8 +95,23 @@ class ConfiguratorDriver extends Translator
      */
     public function searchTranslate(array $identifications): array
     {
-        //TODO toto by mohli jit implementovat!?!
-        // TODO: Implement searchTranslate() method.
-        return [];
+        $dictionary = $this->cache->load('searchTranslate');
+        if ($dictionary === null) {
+            $dictionary = $this->configurator->loadDataByType($this->identification)
+                ->fetchAssoc('ident');
+
+            $this->cache->save('searchTranslate', $dictionary, [
+                Cache::EXPIRE => '30 minutes',
+                Cache::TAGS   => ['saveCache'],
+            ]);
+        }
+
+        $result = [];
+        foreach ($identifications as $identification) {
+            if (isset($dictionary[$identification])) {
+                $result[$identification] = [$dictionary[$identification]['id_locale']]; //TODO tested for only this driver
+            }
+        }
+        return $result;
     }
 }
