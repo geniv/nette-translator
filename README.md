@@ -45,7 +45,9 @@ translator:
 #   driver: Translator\Drivers\NeonDriver(%appDir%)
 #   driver: Translator\Drivers\DibiDriver(%tablePrefix%)
     driver: Translator\Drivers\ConfiguratorDriver
-    path: %appDir%
+    path:
+        - %appDir%
+        - %appDir%/../vendor
 ```
 
 `path` is configure for system search default translation. 
