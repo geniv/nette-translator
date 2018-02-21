@@ -25,7 +25,7 @@ abstract class Translator implements ITranslator
     protected $dictionary = [];
     /** @var string */
     protected $plural = null;
-    /** @var string */
+    /** @var array */
     private $path;
 
 
@@ -109,9 +109,9 @@ abstract class Translator implements ITranslator
     /**
      * Set path.
      *
-     * @param string $path
+     * @param array $path
      */
-    public function setPath(string $path)
+    public function setPath(array $path)
     {
         $this->path = $path;
         $this->searchDefaultTranslate();
