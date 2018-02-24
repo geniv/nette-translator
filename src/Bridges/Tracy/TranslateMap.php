@@ -32,7 +32,7 @@ class TranslateMap
     {
         $dirs = explode('/', $file);
         $this->list[$key] = [
-            'file' => implode('/', array_slice($dirs, -2)), // vrati jen posledni 2 urovne cesty
+            'file' => implode('/', array_slice($dirs, -2)), // return 2 level from path
             'line' => $line,
         ];
     }

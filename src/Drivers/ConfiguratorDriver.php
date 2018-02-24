@@ -109,7 +109,7 @@ class ConfiguratorDriver extends Translator
         $result = [];
         foreach ($identifications as $identification) {
             if (isset($dictionary[$identification])) {
-                $result[$identification] = [$dictionary[$identification]['id_locale']]; //TODO tested for only this driver
+                $result[$identification] = [$dictionary[$identification]['id_locale']]; // tested for only this driver
             }
         }
         return $result;

@@ -3,6 +3,7 @@
 namespace Translator\Bridges\Tracy;
 
 use Latte\Engine;
+use Locale\ILocale;
 use Locale\Locale;
 use Nette\Application\Application;
 use Translator\Translator;
@@ -34,11 +35,14 @@ class Panel implements IBarPanel
     /**
      * Panel constructor.
      *
-     * @param Container $container
+     * @param Container   $container
+     * @param ILocale     $locale
+     * @param Application $application
      */
-    public function __construct(Container $container)
+    public function __construct(Container $container, ILocale $locale, Application $application,Translator $translator)
     {
         $this->container = $container;
+        dump($locale, $application,$translator);
     }
 
 
@@ -50,6 +54,7 @@ class Panel implements IBarPanel
     public function register(Translator $translator)
     {
         $this->translator = $translator;
+        dump($translator);
         Debugger::getBar()->addPanel($this);
     }
 
@@ -78,7 +83,7 @@ class Panel implements IBarPanel
         $locale = $this->container->getByType(Locale::class);   // nacteni lokalizacni sluzby
         $application = $this->container->getByType(Application::class);    // nacteni aplikace
         $presenter = $application->getPresenter();  // nacteni presenteru
-
+dump($locale,$application);
         $translateMap = new TranslateMap;
         // vyrazeni prekladu z @layout
         $layoutLatte = dirname($presenter->template->getFile()) . '/../@layout.latte';

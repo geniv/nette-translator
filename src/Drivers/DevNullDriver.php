@@ -29,32 +29,6 @@ class DevNullDriver extends Translator
 
 
     /**
-     * Translates the given string.
-     *
-     * @param      $message
-     * @param null $count
-     * @param null $plurals
-     * @return null|string
-     */
-    public function translate($message, $count = null, $plurals = null)
-    {
-        if (isset($this->plural) && isset($count) && isset($plurals)) {
-            $plural = null; // vystupni promenna typu pluralu
-            $n = $count;    // predani poctu polozek
-            eval($this->plural);    // samotna evaluace pluralu
-            return sprintf($plurals[$plural], $count);  // vyber spravneho indexu z pole pluralu
-        }
-
-        if (is_array($count)) { // pokud je pole pouzije vsprintf
-            // vicenasobna substituce pole
-            return vsprintf($message, $count);    // pole
-        }
-        // substituce parametru
-        return sprintf($message, $count); // parametr
-    }
-
-
-    /**
      * Load translate.
      */
     protected function loadTranslate()
@@ -72,6 +46,7 @@ class DevNullDriver extends Translator
      */
     protected function saveTranslate(string $identification, string $message, $idLocale = null): string
     {
+        $this->dictionary[$identification] = $message;
         return $message;
     }
 
