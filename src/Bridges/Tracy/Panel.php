@@ -3,13 +3,12 @@
 namespace Translator\Bridges\Tracy;
 
 use Latte\Engine;
-use Locale\Locale;
+use Locale\ILocale;
 use Nette\Application\Application;
-use Translator\Translator;
+use Nette\Localization\ITranslator;
 use Latte\MacroTokens;
 use Latte\Parser;
 use Latte\PhpWriter;
-use Nette\DI\Container;
 use Nette\SmartObject;
 use Tracy\Debugger;
 use Tracy\IBarPanel;
@@ -25,29 +24,33 @@ class Panel implements IBarPanel
 {
     use SmartObject;
 
-    /** @var Translator translator from DI */
+    /** @var ITranslator */
     private $translator;
-    /** @var Container container from DI */
-    private $container;
+    /** @var ILocale */
+    private $locale;
+    /** @var Application */
+    private $application;
 
 
     /**
      * Panel constructor.
      *
-     * @param Container $container
+     * @param ILocale     $locale
+     * @param Application $application
      */
-    public function __construct(Container $container)
+    public function __construct(ILocale $locale, Application $application)
     {
-        $this->container = $container;
+        $this->locale = $locale;
+        $this->application = $application;
     }
 
 
     /**
      * Register to Tracy.
      *
-     * @param Translator $translator
+     * @param ITranslator $translator
      */
-    public function register(Translator $translator)
+    public function register(ITranslator $translator)
     {
         $this->translator = $translator;
         Debugger::getBar()->addPanel($this);
@@ -75,9 +78,7 @@ class Panel implements IBarPanel
      */
     public function getPanel(): string
     {
-        $locale = $this->container->getByType(Locale::class);   // nacteni lokalizacni sluzby
-        $application = $this->container->getByType(Application::class);    // nacteni aplikace
-        $presenter = $application->getPresenter();  // nacteni presenteru
+        $presenter = $this->application->getPresenter();  // load presenter
 
         $translateMap = new TranslateMap;
         // vyrazeni prekladu z @layout
@@ -88,8 +89,8 @@ class Panel implements IBarPanel
 
         $params = [
             // locales
-            'locales'          => $locale->getLocales(),
-            'localeCode'       => $locale->getCode(),
+            'locales'          => $this->locale->getLocales(),
+            'localeCode'       => $this->locale->getCode(),
             // translates
             'translateLayout'  => $layoutTranslate,
             'translateContent' => $contentTranslate,

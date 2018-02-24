@@ -31,36 +31,22 @@ class Extension extends CompilerExtension
         $builder = $this->getContainerBuilder();
         $config = $this->validateConfig($this->defaults);
 
-        $builder->addDefinition($this->prefix('default'))
+        // define driver
+        $default = $builder->addDefinition($this->prefix('default'))
             ->setFactory($config['driver'])
             ->addSetup('setPath', [$config['path']])
             ->setAutowired($config['autowired']);
 
-        // define panel
-        if (isset($config['debugger']) && $config['debugger']) {
-            $builder->addDefinition($this->prefix('panel'))
-                ->setFactory(Panel::class)
-                ->setAutowired($config['autowired']);
-        }
-    }
-
-
-    /**
-     * Before Compile.
-     */
-    public function beforeCompile()
-    {
-        $builder = $this->getContainerBuilder();
-        $config = $this->validateConfig($this->defaults);
-
         // linked filter to latte
         $builder->getDefinition('latte.latteFactory')
-            ->addSetup('addFilter', ['translate', [$this->prefix('@default'), 'translate']]);
+            ->addSetup('addFilter', ['translate', [$default, 'translate']]);
 
+        // define panel
         if (isset($config['debugger']) && $config['debugger']) {
-            // linked panel to tracy
-            $builder->getDefinition($this->prefix('default'))
-                ->addSetup('?->register(?)', [$this->prefix('@panel'), '@self']);
+            $panel = $builder->addDefinition($this->prefix('panel'))
+                ->setFactory(Panel::class)
+                ->setAutowired($config['autowired']);
+            $default->addSetup([$panel, 'register']);
         }
     }
 }

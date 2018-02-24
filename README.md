@@ -30,10 +30,10 @@ Include in application
 ----------------------
 
 available source drivers:
-- Dibi (dibi + cache, self translation db table)
-- Neon (filesystem in neon syntax)
-- DevNull (ignore translate)
-- Configurator (configurator dibi + cache storage)
+- DibiDriver (dibi + cache, self translation db table)
+- NeonDriver (filesystem in neon syntax)
+- DevNullDriver (ignore translate)
+- ConfiguratorDriver (configurator dibi + cache storage)
 
 neon configure:
 ```neon
@@ -41,7 +41,7 @@ neon configure:
 translator:
 #   debugger: true
 #   autowired: true
-#   driver: Translator\Drivers\DevNull
+#   driver: Translator\Drivers\DevNullDriver
 #   driver: Translator\Drivers\NeonDriver(%appDir%)
 #   driver: Translator\Drivers\DibiDriver(%tablePrefix%)
     driver: Translator\Drivers\ConfiguratorDriver
@@ -50,7 +50,7 @@ translator:
         - %appDir%/../vendor
 ```
 
-`path` is configure for system search default translation. 
+`path` is configure for system search default translation.
 Default translation system has name convection `*Translation.neon`, eg: `AppTranslation.neon`
 This neon file has format: `myIndent: MyDefaultMessage`
 

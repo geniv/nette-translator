@@ -142,14 +142,14 @@ class DibiDriver extends Translator
     protected function saveTranslate(string $identification, string $message, $idLocale = null): string
     {
         $values = [
-            'id_locale' => $idLocale,    // prazdna vazba na jazyk => defaultni preklad
-            'id_ident'  => $this->getIdIdentification($identification),      // ukladani identifikatoru
-            'translate' => $message, // ukladani do zkratky jazyka
+            'id_locale' => $idLocale,   // linked to locale
+            'id_ident'  => $this->getIdIdentification($identification), // linked to indentity
+            'translate' => $message,
         ];
 
         $this->connection->insert($this->tableTranslate, $values)->onDuplicateKeyUpdate('%a', $values)->execute();
 
-        $this->dictionary[$identification] = $message;   // pridani slozeneho pole do slovniku
+        $this->dictionary[$identification] = $message;   // add to dictionary
         $this->saveCache();
 
         return $message;    // return message
