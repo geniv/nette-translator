@@ -41,7 +41,7 @@ neon configure:
 translator:
 #   debugger: true
 #   autowired: true
-#   driver: Translator\Drivers\DevNull
+#   driver: Translator\Drivers\DevNullDriver
 #   driver: Translator\Drivers\NeonDriver(%appDir%)
 #   driver: Translator\Drivers\DibiDriver(%tablePrefix%)
     driver: Translator\Drivers\ConfiguratorDriver
