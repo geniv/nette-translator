@@ -46,7 +46,7 @@ class DevNullDriver extends Translator
      */
     protected function saveTranslate(string $identification, string $message, $idLocale = null): string
     {
-        $this->dictionary[$identification] = $message;
+        $this->dictionary[$identification] = $message;  // save to only variable
         return $message;
     }
 
