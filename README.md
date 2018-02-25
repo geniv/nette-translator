@@ -45,7 +45,7 @@ translator:
 #   driver: Translator\Drivers\NeonDriver(%appDir%)
 #   driver: Translator\Drivers\DibiDriver(%tablePrefix%)
     driver: Translator\Drivers\ConfiguratorDriver
-    path:
+    searchPath:
         - %appDir%
         - %appDir%/../vendor
 ```
