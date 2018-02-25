@@ -26,7 +26,7 @@ abstract class Translator implements ITranslator
     /** @var string */
     protected $plural;
     /** @var array */
-    private $pathSearch;
+    private $searchPath;
 
 
     /**
@@ -107,13 +107,13 @@ abstract class Translator implements ITranslator
 
 
     /**
-     * Set path.
+     * Set path search.
      *
-     * @param array $path
+     * @param array $searchPath
      */
-    public function setPath(array $path)
+    public function setSearchPath(array $searchPath)
     {
-        $this->pathSearch = $path;
+        $this->searchPath = $searchPath;
         $this->searchDefaultTranslate();
     }
 
@@ -123,10 +123,10 @@ abstract class Translator implements ITranslator
      */
     private function searchDefaultTranslate()
     {
-        if ($this->pathSearch) {
+        if ($this->searchPath) {
             $messages = [];
             // load all default translation files
-            foreach (Finder::findFiles('*Translation.neon')->from($this->pathSearch) as $file) {
+            foreach (Finder::findFiles('*Translation.neon')->from($this->searchPath) as $file) {
                 $messages = array_merge($messages, (array) Neon::decode(file_get_contents($file->getPathname())));  // translate file may by empty
             }
 

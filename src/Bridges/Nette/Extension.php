@@ -16,10 +16,10 @@ class Extension extends CompilerExtension
 {
     /** @var array default values */
     private $defaults = [
-        'debugger'  => true,
-        'autowired' => true,
-        'driver'    => null,
-        'path'      => null,
+        'debugger'   => true,
+        'autowired'  => true,
+        'driver'     => null,
+        'searchPath' => [],
     ];
 
 
@@ -34,7 +34,7 @@ class Extension extends CompilerExtension
         // define driver
         $default = $builder->addDefinition($this->prefix('default'))
             ->setFactory($config['driver'])
-            ->addSetup('setPath', [$config['path']])
+            ->addSetup('setSearchPath', [$config['searchPath']])
             ->setAutowired($config['autowired']);
 
         // linked filter to latte
