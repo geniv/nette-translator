@@ -24,7 +24,7 @@ abstract class Translator implements ITranslator
     /** @var array */
     protected $dictionary = [];
     /** @var string */
-    protected $plural = null;
+    protected $plural;
     /** @var array */
     private $path;
 
