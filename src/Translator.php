@@ -127,7 +127,7 @@ abstract class Translator implements ITranslator
             $messages = [];
             // load all default translation files
             foreach (Finder::findFiles('*Translation.neon')->from($this->path) as $file) {
-                $messages = array_merge($messages, Neon::decode(file_get_contents($file->getPathname())));
+                $messages = array_merge($messages, (array) Neon::decode(file_get_contents($file->getPathname())));  // translate file may by empty
             }
 
             foreach ($messages as $identification => $message) {
