@@ -81,10 +81,9 @@ class Panel implements IBarPanel
         $presenter = $this->application->getPresenter();  // load presenter
 
         $translateMap = new TranslateMap;
-        // vyrazeni prekladu z @layout
-        $layoutLatte = dirname($presenter->template->getFile()) . '/../@layout.latte';
-        $layoutTranslate = (file_exists($layoutLatte) ? $this->extractFile($layoutLatte, $translateMap) : []);
-        // vytazeni prekladu z aktualniho souboru
+        // load translate from @layout
+        $layoutTranslate = ($presenter->template->getFile() ? $this->extractFile(dirname($presenter->template->getFile()) . '/../@layout.latte', $translateMap) : []);
+        // load translate from current file
         $contentTranslate = ($presenter->template->getFile() ? $this->extractFile($presenter->template->getFile(), $translateMap) : []);
 
         $params = [
@@ -98,7 +97,6 @@ class Panel implements IBarPanel
             'translateSearch'  => $this->translator->searchTranslate(array_merge($layoutTranslate, $contentTranslate)),   // vyhledani prekladu v driveru prekladace
             'translatesMap'    => $translateMap->toArray(), // mapa umisteni prekladu
         ];
-
         $latte = new Engine;
         return $latte->renderToString(__DIR__ . '/PanelTemplate.latte', $params);
     }
