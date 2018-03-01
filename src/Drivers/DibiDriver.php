@@ -134,12 +134,12 @@ class DibiDriver extends Translator
      * Save translate.
      *
      * @param string $identification
-     * @param string $message
+     * @param        $message
      * @param null   $idLocale
      * @return string
      * @throws \Dibi\Exception
      */
-    protected function saveTranslate(string $identification, string $message, $idLocale = null): string
+    protected function saveTranslate(string $identification, $message, $idLocale = null): string
     {
         $values = [
             'id_locale' => $idLocale,   // linked to locale

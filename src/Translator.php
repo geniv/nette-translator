@@ -169,11 +169,11 @@ abstract class Translator implements ITranslator
      * Save translate.
      *
      * @param string $identification
-     * @param string $message
+     * @param        $message
      * @param null   $idLocale
      * @return string
      */
-    abstract protected function saveTranslate(string $identification, string $message, $idLocale = null): string;
+    abstract protected function saveTranslate(string $identification, $message, $idLocale = null): string;
 
 
     /**
