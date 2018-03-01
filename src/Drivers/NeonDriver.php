@@ -54,11 +54,11 @@ class NeonDriver extends Translator
      * Save translate.
      *
      * @param string $identification
-     * @param string $message
+     * @param        $message
      * @param null   $idLocale
      * @return string
      */
-    protected function saveTranslate(string $identification, string $message, $idLocale = null): string
+    protected function saveTranslate(string $identification, $message, $idLocale = null): string
     {
         $this->dictionary[$identification] = $message;  // add to dictionary
         file_put_contents($this->path, Neon::encode($this->dictionary, Neon::BLOCK));   // save to file

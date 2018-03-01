@@ -76,11 +76,11 @@ class ConfiguratorDriver extends Translator
      * Save translate.
      *
      * @param string $identification
-     * @param string $message
+     * @param        $message
      * @param null   $idLocale
      * @return string
      */
-    protected function saveTranslate(string $identification, string $message, $idLocale = null): string
+    protected function saveTranslate(string $identification, $message, $idLocale = null): string
     {
         $method = 'set' . ucfirst($this->identification);
         return $this->configurator->$method($identification, $message);
