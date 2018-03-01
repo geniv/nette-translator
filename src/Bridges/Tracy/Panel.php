@@ -82,7 +82,11 @@ class Panel implements IBarPanel
 
         $translateMap = new TranslateMap;
         // load translate from @layout
-        $layoutTranslate = ($presenter->template->getFile() ? $this->extractFile(dirname($presenter->template->getFile()) . '/../@layout.latte', $translateMap) : []);
+        $layoutFileTranslate = false;
+        if ($presenter->template->getFile()) {
+            $layoutFileTranslate = dirname($presenter->template->getFile()) . '/../@layout.latte';
+        }
+        $layoutTranslate = ($layoutFileTranslate && file_exists($layoutFileTranslate) ? $this->extractFile($layoutFileTranslate, $translateMap) : []);
         // load translate from current file
         $contentTranslate = ($presenter->template->getFile() ? $this->extractFile($presenter->template->getFile(), $translateMap) : []);
 
