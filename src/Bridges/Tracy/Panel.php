@@ -99,7 +99,9 @@ class Panel implements IBarPanel
             'translateContent' => $contentTranslate,
             'translateClass'   => get_class($this->translator),
             'translateSearch'  => $this->translator->searchTranslate(array_merge($layoutTranslate, $contentTranslate)),   // vyhledani prekladu v driveru prekladace
-            'translatesMap'    => $translateMap->toArray(), // mapa umisteni prekladu
+            'translatesMap'    => $translateMap->toArray(), // mapper translate from latte
+            'defaultTranslate' => $this->translator->getListDefaultTranslate(), // list translate from default translate
+            'usedTranslate'    => $this->translator->getListUsedTranslate(),   // list used translate index
         ];
         $latte = new Engine;
         return $latte->renderToString(__DIR__ . '/PanelTemplate.latte', $params);

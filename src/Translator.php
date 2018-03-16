@@ -29,6 +29,8 @@ abstract class Translator implements ITranslator
     private $searchPath;
     /** @var array */
     private $listDefaultTranslate = [];
+    /** @var array */
+    private $listUsedIndex = [];
 
 
     /**
@@ -67,6 +69,7 @@ abstract class Translator implements ITranslator
                         eval($this->plural);    // evaluate plural
                         $pluralFormat = '%s:plural:%d'; // create format plural
                         $pluralIndex = sprintf($pluralFormat, $indexDictionary, $plural);   // main substitute plural form
+                        $this->listUsedIndex[] = $pluralIndex;
                         if (!isset($this->dictionary[$pluralIndex])) {
                             // make other plural form by $nplurals
                             if (isset($nplurals)) {
@@ -81,10 +84,12 @@ abstract class Translator implements ITranslator
                         }
                         return sprintf($this->dictionary[$pluralIndex], $count);    // substitute value
                     } else {
+                        $this->listUsedIndex[] = $indexDictionary;
                         // if plural enable but $count is array
                         return vsprintf($this->dictionary[$indexDictionary], $count);   // array
                     }
                 } else {
+                    $this->listUsedIndex[] = $indexDictionary;
                     if (!isset($this->dictionary[$indexDictionary])) {
                         return $this->saveTranslate($indexDictionary, $message);    // create & return
                     }
@@ -98,6 +103,7 @@ abstract class Translator implements ITranslator
                     }
                 }
             } else {
+                $this->listUsedIndex[] = $indexDictionary;
                 if (!isset($this->dictionary[$indexDictionary])) {
                     return $this->saveTranslate($indexDictionary, $message);    // create & return
                 }
@@ -129,10 +135,15 @@ abstract class Translator implements ITranslator
             $messages = [];
             // load all default translation files
             foreach (Finder::findFiles('*Translation.neon')->from($this->searchPath) as $file) {
-                $messages = array_merge($messages, (array) Neon::decode(file_get_contents($file->getPathname())));  // translate file may by empty
+                $lengthPath = strlen(dirname(__DIR__, 4));
+                $partPath = substr($file->getRealPath(), $lengthPath + 1);
+
+                $fileContent = (array) Neon::decode(file_get_contents($file->getPathname()));
+                $this->listDefaultTranslate[$partPath] = $fileContent;
+
+                $messages = array_merge($messages, $fileContent);  // translate file may by empty
             }
 
-            $this->listDefaultTranslate = $messages;
             foreach ($messages as $identification => $message) {
                 if (!isset($this->dictionary[$identification]) && !is_array($message)) {   // save only not exist identification and only string message
                     $this->saveTranslate($identification, $message);    // call only save default value load from files
@@ -150,6 +161,17 @@ abstract class Translator implements ITranslator
     public function getListDefaultTranslate(): array
     {
         return $this->listDefaultTranslate;
+    }
+
+
+    /**
+     * Get list used translate.
+     *
+     * @return array
+     */
+    public function getListUsedTranslate(): array
+    {
+        return $this->listUsedIndex;
     }
 
 
@@ -192,6 +214,8 @@ abstract class Translator implements ITranslator
 
     /**
      * Search translate.
+     *
+     * TODO maybe deprecated!
      *
      * @param array $identifications
      * @return array
