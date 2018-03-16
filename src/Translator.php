@@ -176,6 +176,17 @@ abstract class Translator implements ITranslator
 
 
     /**
+     * Get dictionary.
+     *
+     * @return array
+     */
+    public function getDictionary(): array
+    {
+        return $this->dictionary;
+    }
+
+
+    /**
      * Create translate.
      *
      * @param      $identification

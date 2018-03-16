@@ -102,6 +102,7 @@ class Panel implements IBarPanel
             'translatesMap'    => $translateMap->toArray(), // mapper translate from latte
             'defaultTranslate' => $this->translator->getListDefaultTranslate(), // list translate from default translate
             'usedTranslate'    => $this->translator->getListUsedTranslate(),   // list used translate index
+            'dictionary'       => $this->translator->getDictionary(),   // list dictionary
         ];
         $latte = new Engine;
         return $latte->renderToString(__DIR__ . '/PanelTemplate.latte', $params);

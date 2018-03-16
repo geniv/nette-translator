@@ -45,4 +45,20 @@
             <td colspan="{count($locales)+3}" style="text-align: center;">No translate</td>
         </tr>
     </table>
+
+
+    <table>
+        <caption>Used translate index</caption>
+        <tr>
+            <th>Index</th>
+            <th>Used</th>
+        </tr>
+        <tr n:foreach="$usedTranslate as $item">
+            <td>{$item}</td>
+            <td>{ifset $dictionary[$item]}OK{else}---{/ifset}</td>
+        </tr>
+        <tr n:if="$iterations==0">
+            <td colspan="2" style="text-align: center;">No items</td>
+        </tr>
+    </table>
 </div>
