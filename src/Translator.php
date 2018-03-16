@@ -231,15 +231,4 @@ abstract class Translator implements ITranslator
      * @return string
      */
     abstract protected function saveTranslate(string $identification, $message, $idLocale = null): string;
-
-
-    /**
-     * Search translate.
-     *
-     * TODO maybe deprecated!
-     *
-     * @param array $identifications
-     * @return array
-     */
-    abstract public function searchTranslate(array $identifications): array;
 }
