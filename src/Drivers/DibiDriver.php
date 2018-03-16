@@ -146,7 +146,7 @@ class DibiDriver extends Translator
             'id_ident'  => $this->getIdIdentification($identification), // linked to indentity
             'translate' => $message,
         ];
-
+        //TODO bacha na NULL hodnoty!
         $this->connection->insert($this->tableTranslate, $values)->onDuplicateKeyUpdate('%a', $values)->execute();
 
         $this->dictionary[$identification] = $message;   // add to dictionary

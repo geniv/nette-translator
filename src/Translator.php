@@ -27,6 +27,8 @@ abstract class Translator implements ITranslator
     protected $plural;
     /** @var array */
     private $searchPath;
+    /** @var array */
+    private $listDefaultTranslate = [];
 
 
     /**
@@ -48,61 +50,61 @@ abstract class Translator implements ITranslator
     /**
      * Translates the given string.
      *
-     * @param      $message
-     * @param null $count
-     * @return null|string
+     * @param  mixed    message
+     * @param  int      plural count
+     * @return string
      */
-    public function translate($message, $count = NULL)
+    public final function translate($message, $count = NULL)
     {
-        $indexDictionary = $message; // jako index je pouzity text ktery odpovida prekladovemu textu
+        $indexDictionary = $message; // message is index (identification) for translation
 
         if ($message) {
             if (isset($count)) {
                 if (isset($this->plural)) {
-                    $plural = null; // vystupni promenna typu pluralu
-                    $n = (is_array($count) ? $count[0] : $count);    // vstupni promenna poctu (pokud je pole, bere index: [0])
-                    eval($this->plural);    // samotna evaluace pluralu
-                    $pluralFormat = '%s:plural:%d'; // format pluralu
-                    $pluralIndex = sprintf($pluralFormat, $indexDictionary, $plural);   // slozeni rozsireneho indexu
-                    if (!isset($this->dictionary[$pluralIndex])) {
-                        // hromadne vkladani plural tvaru podle poctu ($nplurals)
-                        if (isset($nplurals)) {
-                            // vlozeni vsech pluralu naraz
-                            for ($i = 0; $i < $nplurals; $i++) {
-                                $this->saveTranslate(sprintf($pluralFormat, $indexDictionary, $i), $message);    // vytvoreni vsech pluralu
+                    if (!is_array($count)) {
+                        $plural = null; // input variable plural for eval
+                        $n = $count;    // input variable count for eval
+                        eval($this->plural);    // evaluate plural
+                        $pluralFormat = '%s:plural:%d'; // create format plural
+                        $pluralIndex = sprintf($pluralFormat, $indexDictionary, $plural);   // main substitute plural form
+                        if (!isset($this->dictionary[$pluralIndex])) {
+                            // make other plural form by $nplurals
+                            if (isset($nplurals)) {
+                                // iterate over $nplurals
+                                for ($i = 0; $i < $nplurals; $i++) {
+                                    $this->saveTranslate(sprintf($pluralFormat, $indexDictionary, $i), $message);   // create plural index
+                                }
+                                return $message;    // return message
+                            } else {
+                                return $this->saveTranslate($pluralIndex, $message);    // create plural without $nplurals
                             }
-                            return $message;
-                        } else {
-                            return $this->saveTranslate($pluralIndex, $message);  // vytvoreni konkretniho pluralu
                         }
+                        return sprintf($this->dictionary[$pluralIndex], $count);    // substitute value
                     } else {
-                        if (is_array($count)) { // pokud je pole pouzije vsprintf
-                            // vicenasobna substituce pole
-                            return vsprintf($this->dictionary[$pluralIndex], $count);    // pole
-                        }
-                        // substituce parametru
-                        return sprintf($this->dictionary[$pluralIndex], $count); // parametr
+                        // if plural enable but $count is array
+                        return vsprintf($this->dictionary[$indexDictionary], $count);   // array
                     }
                 } else {
                     if (!isset($this->dictionary[$indexDictionary])) {
-                        return $this->saveTranslate($indexDictionary, $message);    // vytvoreni
+                        return $this->saveTranslate($indexDictionary, $message);    // create & return
                     }
 
-                    if (is_array($count)) { // pokud je pole pouzije vsprintf
-                        // vicenasobna substituce pole
-                        return vsprintf($this->dictionary[$indexDictionary], $count);    // pole
+                    if (!is_array($count)) {
+                        // count is value
+                        return sprintf($this->dictionary[$indexDictionary], $count);    // value
                     } else {
-                        return sprintf($this->dictionary[$indexDictionary], $count); // parametr
+                        // count is array
+                        return vsprintf($this->dictionary[$indexDictionary], $count);   // array
                     }
                 }
+            } else {
+                if (!isset($this->dictionary[$indexDictionary])) {
+                    return $this->saveTranslate($indexDictionary, $message);    // create & return
+                }
+                return $this->dictionary[$indexDictionary];
             }
-
-            if (!isset($this->dictionary[$indexDictionary])) {
-                return $this->saveTranslate($indexDictionary, $message);    // vytvoreni
-            }
-            return $this->dictionary[$indexDictionary];
         }
-        return null;
+        return '';
     }
 
 
@@ -130,12 +132,24 @@ abstract class Translator implements ITranslator
                 $messages = array_merge($messages, (array) Neon::decode(file_get_contents($file->getPathname())));  // translate file may by empty
             }
 
+            $this->listDefaultTranslate = $messages;
             foreach ($messages as $identification => $message) {
                 if (!isset($this->dictionary[$identification]) && !is_array($message)) {   // save only not exist identification and only string message
                     $this->saveTranslate($identification, $message);    // call only save default value load from files
                 }
             }
         }
+    }
+
+
+    /**
+     * Get list default translate.
+     *
+     * @return array
+     */
+    public function getListDefaultTranslate(): array
+    {
+        return $this->listDefaultTranslate;
     }
 
 
