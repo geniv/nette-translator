@@ -83,6 +83,9 @@ abstract class Translator implements ITranslator
                         return sprintf($this->dictionary[$pluralIndex], $count);    // substitute value
                     } else {
                         $this->listUsedIndex[] = $indexDictionary;
+                        if (!isset($this->dictionary[$indexDictionary])) {
+                            return $this->saveTranslate($indexDictionary, $message);    // create & return
+                        }
                         // if plural enable but $count is array
                         return vsprintf($this->dictionary[$indexDictionary], $count);   // array
                     }
