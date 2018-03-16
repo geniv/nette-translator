@@ -99,9 +99,9 @@ class Panel implements IBarPanel
             'translateContent' => $contentTranslate,
             'translateClass'   => get_class($this->translator),
             'translateSearch'  => $this->translator->searchTranslate(array_merge($layoutTranslate, $contentTranslate)),   // vyhledani prekladu v driveru prekladace
-            'translatesMap'    => $translateMap->toArray(), // mapper translate from latte
-            'defaultTranslate' => $this->translator->getListDefaultTranslate(), // list translate from default translate
-            'usedTranslate'    => $this->translator->getListUsedTranslate(),   // list used translate index
+            'translatesMap'    => $translateMap->toArray(),     // mapper translate from latte
+            'defaultTranslate' => $this->translator->getListAllDefaultTranslate(), // list translate from default translate
+            'usedTranslate'    => array_flip($this->translator->getListUsedTranslate()),    // list used translate index
             'dictionary'       => $this->translator->getDictionary(),   // list dictionary
         ];
         $latte = new Engine;

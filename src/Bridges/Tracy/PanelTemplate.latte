@@ -53,9 +53,9 @@
             <th>Index</th>
             <th>Used</th>
         </tr>
-        <tr n:foreach="$usedTranslate as $item">
-            <td>{$item}</td>
-            <td>{ifset $dictionary[$item]}OK{else}---{/ifset}</td>
+        <tr n:foreach="$dictionary as $index=>$item">
+            <td>{$index}</td>
+            <td>{ifset $usedTranslate[$item]}OK{else}---{/ifset} / {ifset $defaultTranslate[$item]}...{/ifset}</td>
         </tr>
         <tr n:if="$iterations==0">
             <td colspan="2" style="text-align: center;">No items</td>

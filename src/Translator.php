@@ -28,9 +28,7 @@ abstract class Translator implements ITranslator
     /** @var array */
     private $searchPath;
     /** @var array */
-    private $listDefaultTranslate = [];
-    /** @var array */
-    private $listUsedIndex = [];
+    private $listDefaultTranslate = [], $listAllDefaultTranslate = [], $listUsedIndex = [];
 
 
     /**
@@ -143,6 +141,7 @@ abstract class Translator implements ITranslator
 
                 $messages = array_merge($messages, $fileContent);  // translate file may by empty
             }
+            $this->listAllDefaultTranslate = $messages;
 
             foreach ($messages as $identification => $message) {
                 if (!isset($this->dictionary[$identification]) && !is_array($message)) {   // save only not exist identification and only string message
@@ -161,6 +160,17 @@ abstract class Translator implements ITranslator
     public function getListDefaultTranslate(): array
     {
         return $this->listDefaultTranslate;
+    }
+
+
+    /**
+     * Get list all default translate.
+     *
+     * @return array
+     */
+    public function getListAllDefaultTranslate(): array
+    {
+        return $this->listAllDefaultTranslate;
     }
 
 
