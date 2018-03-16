@@ -146,33 +146,12 @@ class DibiDriver extends Translator
             'id_ident'  => $this->getIdIdentification($identification), // linked to indentity
             'translate' => $message,
         ];
-
+        //TODO bacha na NULL hodnoty!
         $this->connection->insert($this->tableTranslate, $values)->onDuplicateKeyUpdate('%a', $values)->execute();
 
         $this->dictionary[$identification] = $message;   // add to dictionary
         $this->saveCache();
 
         return $message;    // return message
-    }
-
-
-    /**
-     * Search translate.
-     *
-     * @param array $identifications
-     * @return array
-     */
-    public function searchTranslate(array $identifications): array
-    {
-        $locales = $this->connection->select('t.id, b.ident, GROUP_CONCAT(t.id_locale) locales, t.translate')
-            ->from($this->tableTranslate)->as('t')
-            ->join($this->tableTranslateIdent)->as('b')->on('b.id=t.id_ident')
-            ->where('b.ident IN %in', $identifications)
-            ->groupBy('b.ident')
-            ->fetchPairs('ident', 'locales');
-
-        return array_map(function ($r) {
-            return ($r ? explode(',', $r) : null);
-        }, $locales);
     }
 }

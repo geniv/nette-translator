@@ -85,33 +85,4 @@ class ConfiguratorDriver extends Translator
         $method = 'set' . ucfirst($this->identification);
         return $this->configurator->$method($identification, $message);
     }
-
-
-    /**
-     * Search translate.
-     *
-     * @param array $identifications
-     * @return array
-     */
-    public function searchTranslate(array $identifications): array
-    {
-        $dictionary = $this->cache->load('searchTranslate');
-        if ($dictionary === null) {
-            $dictionary = $this->configurator->loadDataByType($this->identification)
-                ->fetchAssoc('ident');
-
-            $this->cache->save('searchTranslate', $dictionary, [
-                Cache::EXPIRE => '30 minutes',
-                Cache::TAGS   => ['saveCache'],
-            ]);
-        }
-
-        $result = [];
-        foreach ($identifications as $identification) {
-            if (isset($dictionary[$identification])) {
-                $result[$identification] = [$dictionary[$identification]['id_locale']]; // tested for only this driver
-            }
-        }
-        return $result;
-    }
 }

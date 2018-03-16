@@ -64,16 +64,4 @@ class NeonDriver extends Translator
         file_put_contents($this->path, Neon::encode($this->dictionary, Neon::BLOCK));   // save to file
         return $message;
     }
-
-
-    /**
-     * Search translate.
-     *
-     * @param array $identifications
-     * @return array
-     */
-    public function searchTranslate(array $identifications): array
-    {
-        return [];
-    }
 }

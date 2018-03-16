@@ -49,16 +49,4 @@ class DevNullDriver extends Translator
         $this->dictionary[$identification] = $message;  // save to only variable
         return $message;
     }
-
-
-    /**
-     * Search translate.
-     *
-     * @param array $identifications
-     * @return array
-     */
-    public function searchTranslate(array $identifications): array
-    {
-        return [];
-    }
 }

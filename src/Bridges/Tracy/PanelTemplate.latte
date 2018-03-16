@@ -1,48 +1,27 @@
 <h1>{$translateClass}</h1>
 <div class="tracy-inner">
     <table>
-        <caption>Layout latte translate</caption>
+        <caption>Used translate index in default translate</caption>
         <tr>
-            <th>Ident</th>
-            {ifset $locales}
-                <th n:foreach="$locales as $locale" n:class="$locale['code']==$localeCode?active">{$locale['code']}</th>
-            {/ifset}
-            <th>File</th>
-            <th>Line</th>
+            <th>Index</th>
+            <th>Used</th>
         </tr>
-        <tr n:foreach="$translateLayout as $translate">
-            <td>{$translate}</td>
-            {ifset $locales}
-                <td n:foreach="$locales as $locale">{if isset($translateSearch[$translate]) && in_array($locale['id'], $translateSearch[$translate])}OK{else}---{/if}</td>
-            {/ifset}
-            <td>{$translatesMap[$translate]['file']}</td>
-            <td>{$translatesMap[$translate]['line']}</td>
+        <tr n:foreach="$usedTranslate as $item">
+            <td>{$item}</td>
+            <td style="text-align: center;">
+                {ifset $defaultTranslate[$item]}
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="16" height="16">
+                        <path d="M504.502 75.496c-9.997-9.998-26.205-9.998-36.204 0L161.594 382.203 43.702 264.311c-9.997-9.998-26.205-9.997-36.204 0-9.998 9.997-9.998 26.205 0 36.203l135.994 135.992c9.994 9.997 26.214 9.99 36.204 0L504.502 111.7c9.998-9.997 9.997-26.206 0-36.204z"/>
+                    </svg>
+                {else}
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512.001 512.001" width="16" height="16">
+                        <path d="M294.111 256.001L504.109 46.003c10.523-10.524 10.523-27.586 0-38.109-10.524-10.524-27.587-10.524-38.11 0L256 217.892 46.002 7.894C35.478-2.63 18.416-2.63 7.893 7.894s-10.524 27.586 0 38.109l209.998 209.998L7.893 465.999c-10.524 10.524-10.524 27.586 0 38.109 10.524 10.524 27.586 10.523 38.109 0L256 294.11l209.997 209.998c10.524 10.524 27.587 10.523 38.11 0 10.523-10.524 10.523-27.586 0-38.109L294.111 256.001z"/>
+                    </svg>
+                {/ifset}
+            </td>
         </tr>
         <tr n:if="$iterations==0">
-            <td colspan="{count($locales)+3}" style="text-align: center;">No translate</td>
-        </tr>
-    </table>
-
-    <table>
-        <caption>Content latte translate</caption>
-        <tr>
-            <th>Ident</th>
-            {ifset $locales}
-                <th n:foreach="$locales as $locale" n:class="$locale['code']==$localeCode?active">{$locale['code']}</th>
-            {/ifset}
-            <th>File</th>
-            <th>Line</th>
-        </tr>
-        <tr n:foreach="$translateContent as $translate">
-            <td>{$translate}</td>
-            {ifset $locales}
-                <td n:foreach="$locales as $locale">{if isset($translateSearch[$translate]) && in_array($locale['id'], $translateSearch[$translate])}OK{else}---{/if}</td>
-            {/ifset}
-            <td>{$translatesMap[$translate]['file']}</td>
-            <td>{$translatesMap[$translate]['line']}</td>
-        </tr>
-        <tr n:if="$iterations==0">
-            <td colspan="{count($locales)+3}" style="text-align: center;">No translate</td>
+            <td colspan="2" style="text-align: center;">No items</td>
         </tr>
     </table>
 </div>

@@ -64,6 +64,7 @@ usage:
 ```latte
 {_'preklad'}
 {_'preklad', $pocet}
+{_'preklad', [$pocet]}
 ```
 
 **this latte macro is not supported, because like index must use be simple string `{_'xyz'}`**:
