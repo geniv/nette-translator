@@ -57,9 +57,9 @@ class Panel implements IBarPanel
     public function getPanel(): string
     {
         $params = [
-            'translateClass' => get_class($this->translator),
-            'usedTranslate'  => array_flip($this->translator->getListUsedTranslate()),    // list used translate index
-            'dictionary'     => $this->translator->getDictionary(),   // list dictionary
+            'translateClass'   => get_class($this->translator),
+            'usedTranslate'    => $this->translator->getListUsedTranslate(),    // list used translate index
+            'defaultTranslate' => $this->translator->getListAllDefaultTranslate(),  // list default translate
         ];
         $latte = new Engine;
         return $latte->renderToString(__DIR__ . '/PanelTemplate.latte', $params);
