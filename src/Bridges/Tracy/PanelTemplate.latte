@@ -24,4 +24,17 @@
             <td colspan="2" style="text-align: center;">No items</td>
         </tr>
     </table>
+
+    <table>
+        <caption>Used default translate file</caption>
+        <tr>
+            <th>Path</th>
+        </tr>
+        <tr n:foreach="$listDefaultTranslate as $item">
+            <td>{$item}</td>
+        </tr>
+        <tr n:if="$iterations==0">
+            <td style="text-align: center;">No items</td>
+        </tr>
+    </table>
 </div>
