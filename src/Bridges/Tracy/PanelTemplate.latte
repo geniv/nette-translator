@@ -26,19 +26,23 @@
     </table>
 
     {if $listDefaultTranslate}
-        <a class="tracy-toggle tracy-collapsed" data-tracy-ref="^div .tracy-default-translate-panel">Used default translate file ({count($listDefaultTranslate)})</a>
-        <table class="tracy-default-translate-panel tracy-collapsed">
-            <tr>
-                <th>Path</th>
-                <th>Count</th>
-            </tr>
-            <tr n:foreach="$listDefaultTranslate as $file => $items">
-                <td>{$file}</td>
-                <td>{count($items)}</td>
-            </tr>
-            <tr n:if="$iterations==0">
-                <td colspan="2" style="text-align: center;">No items</td>
-            </tr>
-        </table>
+        <h2>
+            <a class="tracy-toggle tracy-collapsed" data-tracy-ref="^div .tracy-default-translate-panel">Used default translate file ({count($listDefaultTranslate)})</a>
+        </h2>
+        <div class="tracy-default-translate-panel tracy-collapsed">
+            <table>
+                <tr>
+                    <th>Path</th>
+                    <th>Count</th>
+                </tr>
+                <tr n:foreach="$listDefaultTranslate as $file => $items">
+                    <td>{$file}</td>
+                    <td>{count($items)}</td>
+                </tr>
+                <tr n:if="$iterations==0">
+                    <td colspan="2" style="text-align: center;">No items</td>
+                </tr>
+            </table>
+        </div>
     {/if}
 </div>
