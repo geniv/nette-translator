@@ -4,7 +4,6 @@ namespace Translator\Bridges\Tracy;
 
 use Latte\Engine;
 use Nette\SmartObject;
-use Tracy\Debugger;
 use Tracy\IBarPanel;
 use Translator\Translator;
 
@@ -24,14 +23,13 @@ class Panel implements IBarPanel
 
 
     /**
-     * Register to Tracy.
+     * Panel constructor.
      *
      * @param Translator $translator
      */
-    public function register(Translator $translator)
+    public function __construct(Translator $translator)
     {
         $this->translator = $translator;
-        Debugger::getBar()->addPanel($this);
     }
 
 
@@ -57,7 +55,7 @@ class Panel implements IBarPanel
     public function getPanel(): string
     {
         $params = [
-            'translateClass'          => get_class($this->translator),
+            'class'                   => get_class($this->translator),
             'listUsedTranslate'       => array_unique($this->translator->getListUsedTranslate()),   // list used translate index
             'listAllDefaultTranslate' => $this->translator->getListAllDefaultTranslate(),           // list default translate
             'listDefaultTranslate'    => $this->translator->getListDefaultTranslate(),              // list default translate path
