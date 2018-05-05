@@ -42,11 +42,13 @@ class Extension extends CompilerExtension
             ->addSetup('addFilter', ['translate', [$default, 'translate']]);
 
         // define panel
-        if (isset($config['debugger']) && $config['debugger']) {
+        if ($config['debugger']) {
             $panel = $builder->addDefinition($this->prefix('panel'))
-                ->setFactory(Panel::class)
-                ->setAutowired($config['autowired']);
-            $default->addSetup([$panel, 'register']);
+                ->setFactory(Panel::class);
+
+            // linked panel to tracy
+            $builder->getDefinition('tracy.bar')
+                ->addSetup('addPanel', [$panel]);
         }
     }
 }

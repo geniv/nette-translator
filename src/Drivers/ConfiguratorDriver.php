@@ -79,6 +79,7 @@ class ConfiguratorDriver extends Translator
      * @param        $message
      * @param null   $idLocale
      * @return string
+     * @throws \Dibi\Exception
      */
     protected function saveTranslate(string $identification, $message, $idLocale = null): string
     {
