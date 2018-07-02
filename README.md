@@ -46,13 +46,16 @@ translator:
 #   driver: Translator\Drivers\DibiDriver(%tablePrefix%)
     driver: Translator\Drivers\ConfiguratorDriver
     searchPath:
+        - %appDir%/../vendor/geniv  # first vendor
         - %appDir%
-        - %appDir%/../vendor
+        - %appDir%/presenters/CustomTranslation.neon
 ```
 
-`path` is configure for system search default translation.
+`path` is configure for system search default translations.
 Default translation system has name convection `*Translation.neon`, eg: `AppTranslation.neon`
-This neon file has format: `myIndent: MyDefaultMessage`
+Names in dirs are sort with function natsort().
+It is possible set manual file.
+This neon file has format: `myIndent: "MyDefaultMessage"`
 
 neon configure extension:
 ```neon
@@ -62,14 +65,19 @@ extensions:
 
 usage:
 ```latte
+{* standard translating *}
 {_'preklad'}
+
+{* plural translating *}
 {_'preklad', $pocet}
+
+{* substitution translating *}
 {_'preklad', [$pocet]}
 ```
 
-**this latte macro is not supported, because like index must use be simple string `{_'xyz'}`**:
+**this latte macro is not supported, because like index must use be simple string like `{_'xyz'}`**:
 ```latte
-{_}preklad{/_}
+{_}translate{/_}
 ```
 
 presenters:
@@ -77,13 +85,11 @@ presenters:
 /** @var ITranslator @inject */
 public $translator;
 
-// nastaveni na formular
 $form = new \Nette\Application\UI\Form;
 $form->setTranslator($this->translator);
 ```
 or
 ```php
-// prelozeni textu
 $this->translator->translate('message-ident');
 
 $this->translator->translate('message-ident', 123);             // inside %s

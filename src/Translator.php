@@ -7,6 +7,7 @@ use Nette\Localization\ITranslator;
 use Nette\Neon\Neon;
 use Nette\SmartObject;
 use Nette\Utils\Finder;
+use SplFileInfo;
 
 
 /**
@@ -134,8 +135,26 @@ abstract class Translator implements ITranslator
     {
         if ($this->searchPath) {
             $messages = [];
+
+            $files = [];
+            foreach ($this->searchPath as $path) {
+                // insert dirs
+                if (is_dir($path)) {
+                    $fil = [];
+                    foreach (Finder::findFiles('*Translation.neon')->from($path) as $file) {
+                        $fil[] = $file;
+                    }
+                    natsort($fil);  // natural sorting path
+                    $files = array_merge($files, $fil);  // merge sort array
+                }
+                // insert file
+                if (is_file($path)) {
+                    $files[] = new SplFileInfo($path);
+                }
+            }
+
             // load all default translation files
-            foreach (Finder::findFiles('*Translation.neon')->from($this->searchPath) as $file) {
+            foreach ($files as $file) {
                 $lengthPath = strlen(dirname(__DIR__, 4));
                 $partPath = substr($file->getRealPath(), $lengthPath + 1);
 
