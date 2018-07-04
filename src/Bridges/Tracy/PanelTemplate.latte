@@ -3,11 +3,14 @@
     <table>
         <caption>Used translate index in default translate</caption>
         <tr>
-            <th>Index</th>
+            <th>Index / Translate</th>
             <th>Used</th>
         </tr>
         <tr n:foreach="$listUsedTranslate as $item">
-            <td>{$item}</td>
+            <td>
+                <a n:tag-ifset="$listAllDefaultTranslate[$item]" class="tracy-toggle tracy-collapsed" data-tracy-ref="^div .tracy-translate-item-{$item|webalize}">{$item}</a>
+                <div n:ifset="$listAllDefaultTranslate[$item]" class="tracy-translate-item-{$item|webalize} tracy-collapsed">{$listAllDefaultTranslate[$item]}</div>
+            </td>
             <td style="text-align: center;">
                 {ifset $listAllDefaultTranslate[$item]}
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="16" height="16">
