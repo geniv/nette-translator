@@ -49,12 +49,15 @@ translator:
         - %appDir%/../vendor/geniv  # first vendor
         - %appDir%
         - %appDir%/presenters/CustomTranslation.neon
+    excludePath:
+        - CustomTranslation.neon
 ```
 
-`path` is configure for system search default translations.
+`searchPath` is configure for system search default translations.
 Default translation system has name convection `*Translation.neon`, eg: `AppTranslation.neon`
 Names in dirs are sort with function natsort().
-It is possible set manual file.
+It is possible add custom default translate file.
+`excludePath` is only exclude in search dirs in `searchPath`.
 This neon file has format: `myIndent: "MyDefaultMessage"`
 
 ##### WARNING: The identification index should not be the same as the translation itself.
@@ -92,9 +95,15 @@ $form->setTranslator($this->translator);
 ```
 or
 ```php
+// standard translating
 $this->translator->translate('message-ident');
 
+// plural translating
 $this->translator->translate('message-ident', 123);             // inside %s
 
+// substitution translating
+$this->translator->translate('message-ident', [123]);           // inside %s
+
+// substitution translating
 $this->translator->translate('message-ident', ['hello', 123]);  // inside %s, %s
 ```

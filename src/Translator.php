@@ -27,8 +27,6 @@ abstract class Translator implements ITranslator
     /** @var string */
     protected $plural;
     /** @var array */
-    private $searchPath;
-    /** @var array */
     private $listDefaultTranslate = [], $listAllDefaultTranslate = [], $listUsedIndex = [];
 
 
@@ -132,28 +130,31 @@ abstract class Translator implements ITranslator
      * Set path search.
      *
      * @param array $searchPath
+     * @param array $excludePath
      */
-    public function setSearchPath(array $searchPath)
+    public function setSearchPath(array $searchPath = [], array $excludePath = [])
     {
-        $this->searchPath = $searchPath;
-        $this->searchDefaultTranslate();
+        $this->searchDefaultTranslate($searchPath, $excludePath);
     }
 
 
     /**
      * Search default translate.
+     *
+     * @param array $searchPath
+     * @param array $excludePath
      */
-    private function searchDefaultTranslate()
+    private function searchDefaultTranslate(array $searchPath = [], array $excludePath = [])
     {
-        if ($this->searchPath) {
+        if ($searchPath) {
             $messages = [];
 
             $files = [];
-            foreach ($this->searchPath as $path) {
+            foreach ($searchPath as $path) {
                 // insert dirs
                 if (is_dir($path)) {
                     $fil = [];
-                    foreach (Finder::findFiles('*Translation.neon')->from($path) as $file) {
+                    foreach (Finder::findFiles('*Translation.neon')->exclude($excludePath)->from($path) as $file) {
                         $fil[] = $file;
                     }
                     natsort($fil);  // natural sorting path
