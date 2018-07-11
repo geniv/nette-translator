@@ -45,7 +45,7 @@ class ConfiguratorDriver extends Translator
         $this->identification = $identification ?: self::TRANSLATION_IDENTIFICATION;
         $this->configurator = $configurator;
 
-        $this->cache = new Cache($storage, 'cache-TranslatorDrivers-DibiDriver');
+        $this->cache = new Cache($storage, 'Translator-Drivers-DibiDriver');
         // key for cache
         $this->cacheKey = 'dictionary' . $this->locale->getId();
 
@@ -65,8 +65,7 @@ class ConfiguratorDriver extends Translator
                 ->fetchPairs('ident', 'content');
 
             $this->cache->save('loadTranslate', $this->dictionary, [
-                Cache::EXPIRE => '30 minutes',
-                Cache::TAGS   => ['saveCache'],
+                Cache::TAGS => ['saveCache'],
             ]);
         }
     }
