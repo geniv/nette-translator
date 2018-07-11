@@ -49,6 +49,18 @@ abstract class Translator implements ITranslator
 
 
     /**
+     * Add used index.
+     *
+     * @param string $index
+     */
+    private function addUsedIndex(string $index)
+    {
+        // add user index and detect default translate (default: index == translate)
+        $this->listUsedIndex[$index] = (isset($this->dictionary[$index]) && $this->dictionary[$index] != $index);
+    }
+
+
+    /**
      * Translates the given string.
      *
      * @param  mixed    message
@@ -68,7 +80,7 @@ abstract class Translator implements ITranslator
                         eval($this->plural);    // evaluate plural
                         $pluralFormat = '%s:plural:%d'; // create format plural
                         $pluralIndex = sprintf($pluralFormat, $indexDictionary, $plural);   // main substitute plural form
-                        $this->listUsedIndex[] = $pluralIndex;
+                        $this->addUsedIndex($pluralIndex);
                         if (!isset($this->dictionary[$pluralIndex])) {
                             // make other plural form by $nplurals
                             if (isset($nplurals)) {
@@ -83,7 +95,7 @@ abstract class Translator implements ITranslator
                         }
                         return sprintf($this->dictionary[$pluralIndex], $count);    // substitute value
                     } else {
-                        $this->listUsedIndex[] = $indexDictionary;
+                        $this->addUsedIndex($indexDictionary);
                         if (!isset($this->dictionary[$indexDictionary])) {
                             return $this->saveTranslate($indexDictionary, $message);    // create & return
                         }
@@ -91,7 +103,7 @@ abstract class Translator implements ITranslator
                         return vsprintf($this->dictionary[$indexDictionary], $count);   // array
                     }
                 } else {
-                    $this->listUsedIndex[] = $indexDictionary;
+                    $this->addUsedIndex($indexDictionary);
                     if (!isset($this->dictionary[$indexDictionary])) {
                         return $this->saveTranslate($indexDictionary, $message);    // create & return
                     }
@@ -105,7 +117,7 @@ abstract class Translator implements ITranslator
                     }
                 }
             } else {
-                $this->listUsedIndex[] = $indexDictionary;
+                $this->addUsedIndex($indexDictionary);
                 if (!isset($this->dictionary[$indexDictionary])) {
                     return $this->saveTranslate($indexDictionary, $message);    // create & return
                 }
@@ -159,11 +171,11 @@ abstract class Translator implements ITranslator
                 $partPath = substr($file->getRealPath(), $lengthPath + 1);
 
                 $fileContent = (array) Neon::decode(file_get_contents($file->getPathname()));
-                $this->listDefaultTranslate[$partPath] = $fileContent;
+                $this->listDefaultTranslate[$partPath] = $fileContent;  // collect all translate by dir
 
                 $messages = array_merge($messages, $fileContent);  // translate file may by empty
             }
-            $this->listAllDefaultTranslate = $messages;
+            $this->listAllDefaultTranslate = $messages; // collect all translate
 
             foreach ($messages as $identification => $message) {
                 if (!isset($this->dictionary[$identification]) && !is_array($message)) {   // save only not exist identification and only string message
