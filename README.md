@@ -57,6 +57,8 @@ Names in dirs are sort with function natsort().
 It is possible set manual file.
 This neon file has format: `myIndent: "MyDefaultMessage"`
 
+##### WARNING: The identification index should not be the same as the translation itself.
+
 neon configure extension:
 ```neon
 extensions:
