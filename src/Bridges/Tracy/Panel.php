@@ -56,9 +56,10 @@ class Panel implements IBarPanel
     {
         $params = [
             'class'                   => get_class($this->translator),
-            'listUsedTranslate'       => array_unique($this->translator->getListUsedTranslate()),   // list used translate index
-            'listAllDefaultTranslate' => $this->translator->getListAllDefaultTranslate(),           // list default translate
-            'listDefaultTranslate'    => $this->translator->getListDefaultTranslate(),              // list default translate path
+            'listUsedTranslate'       => $this->translator->getListUsedTranslate(),         // list used translate index
+            'listAllDefaultTranslate' => $this->translator->getListAllDefaultTranslate(),   // list default translate
+            'listDefaultTranslate'    => $this->translator->getListDefaultTranslate(),      // list default translate path
+            'dictionary'              => $this->translator->getDictionary(),                // list dictionary
         ];
         $latte = new Engine;
         return $latte->renderToString(__DIR__ . '/PanelTemplate.latte', $params);
