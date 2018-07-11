@@ -52,7 +52,7 @@ class DibiDriver extends Translator
         $this->tableTranslateIdent = $prefix . self::TABLE_NAME_IDENT;
 
         $this->connection = $connection;
-        $this->cache = new Cache($storage, 'cache-TranslatorDrivers-DibiDriver');
+        $this->cache = new Cache($storage, 'Translator-Drivers-DibiDriver');
 
         // key for cache
         $this->cacheKey = 'dictionary' . $this->locale->getId();
@@ -85,8 +85,7 @@ class DibiDriver extends Translator
     private function saveCache()
     {
         $this->cache->save($this->cacheKey, $this->dictionary, [
-            Cache::EXPIRE => '30 minutes',
-            Cache::TAGS   => ['saveCache'],
+            Cache::TAGS => ['saveCache'],
         ]);
     }
 

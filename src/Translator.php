@@ -27,8 +27,6 @@ abstract class Translator implements ITranslator
     /** @var string */
     protected $plural;
     /** @var array */
-    private $searchPath;
-    /** @var array */
     private $listDefaultTranslate = [], $listAllDefaultTranslate = [], $listUsedIndex = [];
 
 
@@ -45,6 +43,18 @@ abstract class Translator implements ITranslator
         // zdroj: http://docs.translatehouse.org/projects/localization-guide/en/latest/l10n/pluralforms.html
         // predavani pluralu z locales do translatu vzdy pro konkretni jazyk
         $this->plural = $locale->getPlural();
+    }
+
+
+    /**
+     * Add used index.
+     *
+     * @param string $index
+     */
+    private function addUsedIndex(string $index)
+    {
+        // add user index and detect default translate (default: index == translate)
+        $this->listUsedIndex[$index] = (isset($this->dictionary[$index]) && $this->dictionary[$index] != $index);
     }
 
 
@@ -68,7 +78,7 @@ abstract class Translator implements ITranslator
                         eval($this->plural);    // evaluate plural
                         $pluralFormat = '%s:plural:%d'; // create format plural
                         $pluralIndex = sprintf($pluralFormat, $indexDictionary, $plural);   // main substitute plural form
-                        $this->listUsedIndex[] = $pluralIndex;
+                        $this->addUsedIndex($pluralIndex);
                         if (!isset($this->dictionary[$pluralIndex])) {
                             // make other plural form by $nplurals
                             if (isset($nplurals)) {
@@ -83,7 +93,7 @@ abstract class Translator implements ITranslator
                         }
                         return sprintf($this->dictionary[$pluralIndex], $count);    // substitute value
                     } else {
-                        $this->listUsedIndex[] = $indexDictionary;
+                        $this->addUsedIndex($indexDictionary);
                         if (!isset($this->dictionary[$indexDictionary])) {
                             return $this->saveTranslate($indexDictionary, $message);    // create & return
                         }
@@ -91,7 +101,7 @@ abstract class Translator implements ITranslator
                         return vsprintf($this->dictionary[$indexDictionary], $count);   // array
                     }
                 } else {
-                    $this->listUsedIndex[] = $indexDictionary;
+                    $this->addUsedIndex($indexDictionary);
                     if (!isset($this->dictionary[$indexDictionary])) {
                         return $this->saveTranslate($indexDictionary, $message);    // create & return
                     }
@@ -105,7 +115,7 @@ abstract class Translator implements ITranslator
                     }
                 }
             } else {
-                $this->listUsedIndex[] = $indexDictionary;
+                $this->addUsedIndex($indexDictionary);
                 if (!isset($this->dictionary[$indexDictionary])) {
                     return $this->saveTranslate($indexDictionary, $message);    // create & return
                 }
@@ -120,28 +130,31 @@ abstract class Translator implements ITranslator
      * Set path search.
      *
      * @param array $searchPath
+     * @param array $excludePath
      */
-    public function setSearchPath(array $searchPath)
+    public function setSearchPath(array $searchPath = [], array $excludePath = [])
     {
-        $this->searchPath = $searchPath;
-        $this->searchDefaultTranslate();
+        $this->searchDefaultTranslate($searchPath, $excludePath);
     }
 
 
     /**
      * Search default translate.
+     *
+     * @param array $searchPath
+     * @param array $excludePath
      */
-    private function searchDefaultTranslate()
+    private function searchDefaultTranslate(array $searchPath = [], array $excludePath = [])
     {
-        if ($this->searchPath) {
+        if ($searchPath) {
             $messages = [];
 
             $files = [];
-            foreach ($this->searchPath as $path) {
+            foreach ($searchPath as $path) {
                 // insert dirs
                 if (is_dir($path)) {
                     $fil = [];
-                    foreach (Finder::findFiles('*Translation.neon')->from($path) as $file) {
+                    foreach (Finder::findFiles('*Translation.neon')->exclude($excludePath)->from($path) as $file) {
                         $fil[] = $file;
                     }
                     natsort($fil);  // natural sorting path
@@ -159,11 +172,11 @@ abstract class Translator implements ITranslator
                 $partPath = substr($file->getRealPath(), $lengthPath + 1);
 
                 $fileContent = (array) Neon::decode(file_get_contents($file->getPathname()));
-                $this->listDefaultTranslate[$partPath] = $fileContent;
+                $this->listDefaultTranslate[$partPath] = $fileContent;  // collect all translate by dir
 
                 $messages = array_merge($messages, $fileContent);  // translate file may by empty
             }
-            $this->listAllDefaultTranslate = $messages;
+            $this->listAllDefaultTranslate = $messages; // collect all translate
 
             foreach ($messages as $identification => $message) {
                 if (!isset($this->dictionary[$identification]) && !is_array($message)) {   // save only not exist identification and only string message
