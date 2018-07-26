@@ -2,7 +2,7 @@
 
 namespace Translator\Drivers;
 
-use Configurator;
+use IConfigurator;
 use Locale\ILocale;
 use Nette\Caching\Cache;
 use Nette\Caching\IStorage;
@@ -22,7 +22,7 @@ class ConfiguratorDriver extends Translator
 
     /** @var string */
     private $identification;
-    /** @var Configurator */
+    /** @var IConfigurator */
     private $configurator;
     /** @var Cache */
     private $cache;
@@ -33,19 +33,19 @@ class ConfiguratorDriver extends Translator
     /**
      * ConfiguratorDriver constructor.
      *
-     * @param string       $identification
-     * @param ILocale      $locale
-     * @param Configurator $configurator
-     * @param IStorage     $storage
+     * @param string        $identification
+     * @param ILocale       $locale
+     * @param IConfigurator $configurator
+     * @param IStorage      $storage
      */
-    public function __construct($identification = '', ILocale $locale, Configurator $configurator, IStorage $storage)
+    public function __construct($identification = '', ILocale $locale, IConfigurator $configurator, IStorage $storage)
     {
         parent::__construct($locale);
 
         $this->identification = $identification ?: self::TRANSLATION_IDENTIFICATION;
         $this->configurator = $configurator;
 
-        $this->cache = new Cache($storage, 'Translator-Drivers-DibiDriver');
+        $this->cache = new Cache($storage, 'Translator-Drivers-ConfiguratorDriver');
         // key for cache
         $this->cacheKey = 'dictionary' . $this->locale->getId();
 
@@ -61,12 +61,15 @@ class ConfiguratorDriver extends Translator
     {
         $this->dictionary = $this->cache->load('loadTranslate');
         if ($this->dictionary === null) {
-            $this->dictionary = $this->configurator->loadDataByType($this->identification)
+            $this->dictionary = $this->configurator->getListDataByType($this->identification)
                 ->fetchPairs('ident', 'content');
 
-            $this->cache->save('loadTranslate', $this->dictionary, [
-                Cache::TAGS => ['saveCache'],
-            ]);
+            try {
+                $this->cache->save('loadTranslate', $this->dictionary, [
+                    Cache::TAGS => ['saveCache'],
+                ]);
+            } catch (\Throwable $e) {
+            }
         }
     }
 
