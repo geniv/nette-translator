@@ -40,8 +40,8 @@ abstract class Translator implements ITranslator
         $this->locale = $locale;
 
         // example: '$plural=(n==1) ? 0 : ((n>=2 && n<=4) ? 1 : 2);'
-        // zdroj: http://docs.translatehouse.org/projects/localization-guide/en/latest/l10n/pluralforms.html
-        // predavani pluralu z locales do translatu vzdy pro konkretni jazyk
+        // via: http://docs.translatehouse.org/projects/localization-guide/en/latest/l10n/pluralforms.html
+        // set plurals from locales to translate always current language
         $this->plural = $locale->getPlural();
     }
 
@@ -179,8 +179,10 @@ abstract class Translator implements ITranslator
             $this->listAllDefaultTranslate = $messages; // collect all translate
 
             foreach ($messages as $identification => $message) {
-                if (!isset($this->dictionary[$identification]) && !is_array($message)) {   // save only not exist identification and only string message
-                    $this->saveTranslate($identification, $message);    // call only save default value load from files
+                // save only not exist identification and only string message or identification is same like dictionary index (default translate)
+                if ((!isset($this->dictionary[$identification]) && !is_array($message)) || $this->dictionary[$identification] == $identification) {
+                    // call only save default value load from files
+                    $this->saveTranslate($identification, $message);
                 }
             }
         }
