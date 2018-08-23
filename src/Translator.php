@@ -41,8 +41,6 @@ abstract class Translator implements ITranslator
 
         // example: '$plural=(n==1) ? 0 : ((n>=2 && n<=4) ? 1 : 2);'
         // via: http://docs.translatehouse.org/projects/localization-guide/en/latest/l10n/pluralforms.html
-        // set plurals from locales to translate always current language
-        $this->plural = $locale->getPlural();
     }
 
 
@@ -67,6 +65,14 @@ abstract class Translator implements ITranslator
      */
     public final function translate($message, $count = NULL)
     {
+        // load if is first usage
+        if ($this->locale->isReady() && !$this->dictionary) {
+            // set plurals from locales to translate always current language
+            $this->plural = $this->locale->getPlural();
+//            \Tracy\Debugger::fireLog('Translator::translate, loadTranslate');
+            $this->loadTranslate();  // load data
+        }
+
         $indexDictionary = $message; // message is index (identification) for translation
 
         if ($message) {
@@ -178,11 +184,14 @@ abstract class Translator implements ITranslator
             }
             $this->listAllDefaultTranslate = $messages; // collect all translate
 
-            foreach ($messages as $identification => $message) {
-                // save only not exist identification and only string message or identification is same like dictionary index (default translate)
-                if ((!isset($this->dictionary[$identification]) && !is_array($message)) || $this->dictionary[$identification] == $identification) {
-                    // call only save default value load from files
-                    $this->saveTranslate($identification, $message);
+            if ($this->dictionary) {
+                // if define dictionary
+                foreach ($messages as $identification => $message) {
+                    // save only not exist identification and only string message or identification is same like dictionary index (default translate)
+                    if ((!isset($this->dictionary[$identification]) && !is_array($message)) || $this->dictionary[$identification] == $identification) {
+                        // call only save default value load from files
+                        $this->saveTranslate($identification, $message);
+                    }
                 }
             }
         }

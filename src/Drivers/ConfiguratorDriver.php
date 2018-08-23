@@ -26,8 +26,6 @@ class ConfiguratorDriver extends Translator
     private $configurator;
     /** @var Cache */
     private $cache;
-    /** @var string */
-    private $cacheKey;
 
 
     /**
@@ -38,7 +36,7 @@ class ConfiguratorDriver extends Translator
      * @param IConfigurator $configurator
      * @param IStorage      $storage
      */
-    public function __construct($identification = '', ILocale $locale, IConfigurator $configurator, IStorage $storage)
+    public function __construct(string $identification = '', ILocale $locale, IConfigurator $configurator, IStorage $storage)
     {
         parent::__construct($locale);
 
@@ -46,11 +44,6 @@ class ConfiguratorDriver extends Translator
         $this->configurator = $configurator;
 
         $this->cache = new Cache($storage, 'Translator-Drivers-ConfiguratorDriver');
-        // key for cache
-        $this->cacheKey = 'dictionary' . $this->locale->getId();
-
-        // load translate
-        $this->loadTranslate();
     }
 
 
@@ -59,13 +52,15 @@ class ConfiguratorDriver extends Translator
      */
     protected function loadTranslate()
     {
-        $this->dictionary = $this->cache->load('loadTranslate');
+        $cacheKey = 'dictionary' . $this->locale->getId();
+//        \Tracy\Debugger::fireLog('ConfiguratorDriver::loadTranslate; cacheKey ' . $cacheKey);
+        $this->dictionary = $this->cache->load($cacheKey);
         if ($this->dictionary === null) {
             $this->dictionary = $this->configurator->getListDataByType($this->identification)
                 ->fetchPairs('ident', 'content');
 
             try {
-                $this->cache->save('loadTranslate', $this->dictionary, [
+                $this->cache->save($cacheKey, $this->dictionary, [
                     Cache::TAGS => ['saveCache'],
                 ]);
             } catch (\Throwable $e) {
