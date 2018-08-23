@@ -36,7 +36,7 @@ class ConfiguratorDriver extends Translator
      * @param IConfigurator $configurator
      * @param IStorage      $storage
      */
-    public function __construct($identification = '', ILocale $locale, IConfigurator $configurator, IStorage $storage)
+    public function __construct(string $identification = '', ILocale $locale, IConfigurator $configurator, IStorage $storage)
     {
         parent::__construct($locale);
 
