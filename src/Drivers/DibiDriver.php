@@ -25,13 +25,11 @@ class DibiDriver extends Translator
         TABLE_NAME = 'translation',
         TABLE_NAME_IDENT = 'translation_ident';
 
-    /** @var Cache data cache */
+    /** @var Cache */
     private $cache;
-    /** @var string name cache key */
-    private $cacheKey;
-    /** @var Connection database connection from DI */
+    /** @var Connection */
     protected $connection;
-    /** @var string table names */
+    /** @var string */
     private $tableTranslate, $tableTranslateIdent;
 
 
@@ -53,40 +51,6 @@ class DibiDriver extends Translator
 
         $this->connection = $connection;
         $this->cache = new Cache($storage, 'Translator-Drivers-DibiDriver');
-
-        // key for cache
-        $this->cacheKey = 'dictionary' . $this->locale->getId();
-
-        // load translate
-        $this->loadCache();
-    }
-
-
-    /**
-     * Load cache.
-     *
-     * @internal
-     */
-    private function loadCache()
-    {
-        $this->dictionary = $this->cache->load($this->cacheKey);
-        if ($this->dictionary === null) {
-            $this->loadTranslate();
-            $this->saveCache();
-        }
-    }
-
-
-    /**
-     * Save cache.
-     *
-     * @internal
-     */
-    private function saveCache()
-    {
-        $this->cache->save($this->cacheKey, $this->dictionary, [
-            Cache::TAGS => ['saveCache'],
-        ]);
     }
 
 
@@ -119,13 +83,24 @@ class DibiDriver extends Translator
      */
     protected function loadTranslate()
     {
-        $this->dictionary = $this->connection->select('t.id, i.ident, IFNULL(lo_t.translate, t.translate) translate')
-            ->from($this->tableTranslate)->as('t')
-            ->join($this->tableTranslateIdent)->as('i')->on('i.id=t.id_ident')
-            ->leftJoin($this->tableTranslate)->as('lo_t')->on('lo_t.id_ident=i.id')->and('lo_t.id_locale=%i', $this->locale->getId())
-            ->where(['t.id_locale' => null])
-            ->groupBy('i.id')
-            ->fetchPairs('ident', 'translate');
+        $cacheKey = 'dictionary' . $this->locale->getId();
+        $this->dictionary = $this->cache->load($cacheKey);
+        if ($this->dictionary === null) {
+            $this->dictionary = $this->connection->select('t.id, i.ident, IFNULL(lo_t.translate, t.translate) translate')
+                ->from($this->tableTranslate)->as('t')
+                ->join($this->tableTranslateIdent)->as('i')->on('i.id=t.id_ident')
+                ->leftJoin($this->tableTranslate)->as('lo_t')->on('lo_t.id_ident=i.id')->and('lo_t.id_locale=%i', $this->locale->getId())
+                ->where(['t.id_locale' => null])
+                ->groupBy('i.id')
+                ->fetchPairs('ident', 'translate');
+
+            try {
+                $this->cache->save($cacheKey, $this->dictionary, [
+                    Cache::TAGS => ['saveCache'],
+                ]);
+            } catch (\Throwable $e) {
+            }
+        }
     }
 
 
@@ -141,7 +116,7 @@ class DibiDriver extends Translator
     protected function saveTranslate(string $identification, $message, $idLocale = null): string
     {
         $values = [
-            'id_locale' => $idLocale,   // linked to locale
+            'id_locale' => $idLocale ?: $this->locale->getIdDefault(),   // linked to locale
             'id_ident'  => $this->getIdIdentification($identification), // linked to indentity
             'translate' => $message,
         ];
