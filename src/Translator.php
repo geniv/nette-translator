@@ -178,11 +178,14 @@ abstract class Translator implements ITranslator
             }
             $this->listAllDefaultTranslate = $messages; // collect all translate
 
-            foreach ($messages as $identification => $message) {
-                // save only not exist identification and only string message or identification is same like dictionary index (default translate)
-                if ((!isset($this->dictionary[$identification]) && !is_array($message)) || $this->dictionary[$identification] == $identification) {
-                    // call only save default value load from files
-                    $this->saveTranslate($identification, $message);
+            if ($this->dictionary) {
+                // if define dictionary
+                foreach ($messages as $identification => $message) {
+                    // save only not exist identification and only string message or identification is same like dictionary index (default translate)
+                    if ((!isset($this->dictionary[$identification]) && !is_array($message)) || $this->dictionary[$identification] == $identification) {
+                        // call only save default value load from files
+                        $this->saveTranslate($identification, $message);
+                    }
                 }
             }
         }
