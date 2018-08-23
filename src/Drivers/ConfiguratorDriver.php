@@ -26,8 +26,6 @@ class ConfiguratorDriver extends Translator
     private $configurator;
     /** @var Cache */
     private $cache;
-    /** @var string */
-    private $cacheKey;
 
 
     /**
@@ -46,8 +44,6 @@ class ConfiguratorDriver extends Translator
         $this->configurator = $configurator;
 
         $this->cache = new Cache($storage, 'Translator-Drivers-ConfiguratorDriver');
-        // key for cache
-        $this->cacheKey = 'dictionary' . $this->locale->getId();
 
         // load translate
         $this->loadTranslate();
