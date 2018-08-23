@@ -33,6 +33,8 @@ class DevNullDriver extends Translator
      */
     protected function loadTranslate()
     {
+        // set fake translate
+        $this->dictionary['__DevNullDriver__'] = true;
     }
 
 
