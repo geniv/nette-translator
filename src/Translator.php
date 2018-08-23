@@ -28,6 +28,8 @@ abstract class Translator implements ITranslator
     protected $plural;
     /** @var array */
     private $listDefaultTranslate = [], $listAllDefaultTranslate = [], $listUsedIndex = [];
+    /** @var array */
+    private $searchPath, $excludePath;
 
 
     /**
@@ -71,6 +73,8 @@ abstract class Translator implements ITranslator
             $this->plural = $this->locale->getPlural();
 //            \Tracy\Debugger::fireLog('Translator::translate, loadTranslate');
             $this->loadTranslate();  // load data
+            // process default translate
+            $this->searchDefaultTranslate($this->searchPath, $this->excludePath);
         }
 
         $indexDictionary = $message; // message is index (identification) for translation
@@ -140,7 +144,8 @@ abstract class Translator implements ITranslator
      */
     public function setSearchPath(array $searchPath = [], array $excludePath = [])
     {
-        $this->searchDefaultTranslate($searchPath, $excludePath);
+        $this->searchPath = $searchPath;
+        $this->excludePath = $excludePath;
     }
 
 
