@@ -31,11 +31,19 @@ class NeonDriver extends Translator
     {
         parent::__construct($locale);
 
-        // path
-        $this->path = $path . '/dictionary-' . $locale->getCode() . '.neon';
+        // set path
+        $this->path = $path;
+    }
 
-        // load translate
-        $this->loadTranslate();
+
+    /**
+     * Get path.
+     *
+     * @return string
+     */
+    private function getPath(): string
+    {
+        return $this->path . '/dictionary-' . $this->locale->getCode() . '.neon';
     }
 
 
@@ -44,8 +52,8 @@ class NeonDriver extends Translator
      */
     protected function loadTranslate()
     {
-        if (file_exists($this->path)) {
-            $this->dictionary = Neon::decode(file_get_contents($this->path));
+        if (file_exists($this->getPath())) {
+            $this->dictionary = Neon::decode(file_get_contents($this->getPath()));
         }
     }
 
@@ -61,7 +69,7 @@ class NeonDriver extends Translator
     protected function saveTranslate(string $identification, $message, $idLocale = null): string
     {
         $this->dictionary[$identification] = $message;  // add to dictionary
-        file_put_contents($this->path, Neon::encode($this->dictionary, Neon::BLOCK));   // save to file
+        file_put_contents($this->getPath(), Neon::encode($this->dictionary, Neon::BLOCK));   // save to file
         return $message;
     }
 }
