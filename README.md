@@ -45,6 +45,8 @@ translator:
 #   driver: Translator\Drivers\NeonDriver(%appDir%)
 #   driver: Translator\Drivers\DibiDriver(%tablePrefix%)
     driver: Translator\Drivers\ConfiguratorDriver
+#    searchMask: 
+#       - *Translation.neon
     searchPath:
         - %appDir%/../vendor/geniv  # first vendor
         - %appDir%
