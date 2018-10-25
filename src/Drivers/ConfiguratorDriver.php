@@ -2,7 +2,7 @@
 
 namespace Translator\Drivers;
 
-use IConfigurator;
+use Configurator\IConfigurator;
 use Locale\ILocale;
 use Nette\Caching\Cache;
 use Nette\Caching\IStorage;
