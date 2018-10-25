@@ -23,7 +23,7 @@ require:
 "nette/nette": ">=2.4.0",
 "dibi/dibi": ">=3.0.0",
 "geniv/nette-locale": ">=1.0.0",
-"geniv/nette-configurator": ">=2.0.0"
+"geniv/nette-configurator": ">=3.0.0"
 ```
 
 Include in application
