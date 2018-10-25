@@ -19,6 +19,7 @@ class Extension extends CompilerExtension
         'debugger'    => true,
         'autowired'   => true,
         'driver'      => null,
+        'searchMask'  => ['*Translation.neon'],
         'searchPath'  => [],
         'excludePath' => [],
     ];
@@ -35,7 +36,7 @@ class Extension extends CompilerExtension
         // define driver
         $default = $builder->addDefinition($this->prefix('default'))
             ->setFactory($config['driver'])
-            ->addSetup('setSearchPath', [$config['searchPath'], $config['excludePath']])
+            ->addSetup('setSearchPath', [$config['searchMask'], $config['searchPath'], $config['excludePath']])
             ->setAutowired($config['autowired']);
 
         // linked filter to latte
