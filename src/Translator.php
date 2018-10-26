@@ -38,7 +38,7 @@ abstract class Translator implements ITranslator
      *
      * @param ILocale $locale
      */
-    protected function __construct(ILocale $locale)
+    public function __construct(ILocale $locale)
     {
         $this->locale = $locale;
 

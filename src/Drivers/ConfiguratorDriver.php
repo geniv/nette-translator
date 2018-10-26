@@ -26,6 +26,7 @@ class ConfiguratorDriver extends Translator
     private $configurator;
     /** @var Cache */
     private $cache;
+//TODO move to configurator - separate?!
 
 
     /**
