@@ -8,6 +8,7 @@ use Nette\Neon\Neon;
 use Nette\SmartObject;
 use Nette\Utils\Finder;
 use Nette\Utils\Strings;
+use SearchContent;
 use SplFileInfo;
 
 
@@ -28,9 +29,9 @@ abstract class Translator implements ITranslator
     /** @var string */
     protected $plural;
     /** @var array */
-    private $listDefaultTranslate = [], $listAllDefaultTranslate = [], $listUsedIndex = [];
-    /** @var array */
-    private $searchMask, $searchPath, $excludePath;
+    private $listAllDefaultTranslate = [], $listUsedIndex = [];
+    /** @var SearchContent */
+    private $searchContent;
 
 
     /**
@@ -38,7 +39,7 @@ abstract class Translator implements ITranslator
      *
      * @param ILocale $locale
      */
-    protected function __construct(ILocale $locale)
+    public function __construct(ILocale $locale)
     {
         $this->locale = $locale;
 
@@ -75,7 +76,7 @@ abstract class Translator implements ITranslator
 //            \Tracy\Debugger::fireLog('Translator::translate, loadTranslate');
             $this->loadTranslate();  // load data
             // process default translate
-            $this->searchDefaultTranslate($this->searchMask, $this->searchPath, $this->excludePath);
+            $this->searchDefaultTranslate();
         }
 
         $indexDictionary = $message; // message is index (identification) for translation
@@ -146,70 +147,26 @@ abstract class Translator implements ITranslator
      */
     public function setSearchPath(array $searchMask = [], array $searchPath = [], array $excludePath = [])
     {
-        $this->searchMask = $searchMask;
-        $this->searchPath = $searchPath;
-        $this->excludePath = $excludePath;
+        $this->searchContent = new SearchContent($searchMask, $searchPath, $excludePath, true);
     }
 
 
     /**
      * Search default translate.
-     *
-     * @param array $searchMask
-     * @param array $searchPath
-     * @param array $excludePath
      */
-    private function searchDefaultTranslate(array $searchMask, array $searchPath = [], array $excludePath = [])
+    private function searchDefaultTranslate()
     {
-        if ($searchPath) {
-            $files = [];
-            foreach ($searchPath as $path) {
-                // insert dirs
-                if (is_dir($path)) {
-                    $fil = [];
-                    foreach (Finder::findFiles($searchMask)->exclude($excludePath)->from($path) as $file) {
-                        $fil[] = $file;
-                    }
-                    natsort($fil);  // natural sorting path
-                    $files = array_merge($files, $fil);  // merge sort array
-                }
-                // insert file
-                if (is_file($path)) {
-                    $files[] = new SplFileInfo($path);
-                }
-            }
+        $this->listAllDefaultTranslate = $this->searchContent->getList();
 
-            // load all default translation files
-            foreach ($files as $file) {
-                $lengthPath = strlen(dirname(__DIR__, 4));
-                $partPath = substr($file->getRealPath(), $lengthPath + 1);
-                // load neon file
-                $fileContent = (array) Neon::decode(file_get_contents($file->getPathname()));
-                // prepare empty row
-                $this->listDefaultTranslate[$partPath] = [];
-
-                foreach ($fileContent as $index => $item) {
-                    $prepareType = Strings::match($index, '#@[a-z]+@#');
-                    // content type
-                    $contentType = Strings::trim(implode((array) $prepareType), '@');
-                    // content index
-                    $contentIndex = Strings::replace($index, ['#@[a-z]+@#' => '']);
-                    if (!$contentType) {
-                        // select except translation
-                        $this->listDefaultTranslate[$partPath][$contentIndex] = $item;
-                        $this->listAllDefaultTranslate[$contentIndex] = $item;
-                    }
-                }
-            }
-
-            if ($this->dictionary) {
-                // if define dictionary
-                foreach ($this->listAllDefaultTranslate as $identification => $message) {
-                    // save only not exist identification and only string message or identification is same like dictionary index (default translate)
-                    if ((!isset($this->dictionary[$identification]) && !is_array($message)) || $this->dictionary[$identification] == $identification) {
-                        // call only save default value load from files
-                        $this->saveTranslate($identification, $message);
-                    }
+        if ($this->dictionary && $this->listAllDefaultTranslate) {
+            // if define dictionary
+            foreach ($this->listAllDefaultTranslate as $identification => $item) {
+                $message = $item['value'];
+                // save only not exist identification and only string message or identification is same like dictionary index (default translate)
+//                if ((!isset($this->dictionary[$identification]) && !is_array($message)) || $this->dictionary[$identification] == $identification) {
+                if (!isset($this->dictionary[$identification]) || $this->dictionary[$identification] == $identification) {
+                    // call only save default value load from files
+                    $this->saveTranslate($identification, $message);
                 }
             }
         }
@@ -223,7 +180,7 @@ abstract class Translator implements ITranslator
      */
     public function getListDefaultTranslate(): array
     {
-        return $this->listDefaultTranslate;
+        return $this->searchContent->getListCategory();
     }
 
 

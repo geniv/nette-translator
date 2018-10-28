@@ -23,17 +23,16 @@ require:
 "nette/nette": ">=2.4.0",
 "dibi/dibi": ">=3.0.0",
 "geniv/nette-locale": ">=1.0.0",
-"geniv/nette-configurator": ">=3.0.0"
+"geniv/nette-search-content": ">=1.0.0"
 ```
 
 Include in application
 ----------------------
 
 available source drivers:
-- DibiDriver (dibi + cache, self translation db table)
+- DevNullDriver (ignore translate, only default translate)
 - NeonDriver (filesystem in neon syntax)
-- DevNullDriver (ignore translate)
-- ConfiguratorDriver (configurator dibi + cache storage)
+- DibiDriver (dibi + cache `_Translator-Drivers-DibiDriver`, self translation db table)
 
 neon configure:
 ```neon
@@ -41,10 +40,9 @@ neon configure:
 translator:
 #   debugger: true
 #   autowired: true
-#   driver: Translator\Drivers\DevNullDriver
+    driver: Translator\Drivers\DevNullDriver
 #   driver: Translator\Drivers\NeonDriver(%appDir%)
 #   driver: Translator\Drivers\DibiDriver(%tablePrefix%)
-    driver: Translator\Drivers\ConfiguratorDriver
 #    searchMask: 
 #       - *Translation.neon
     searchPath:
