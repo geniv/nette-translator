@@ -23,6 +23,9 @@ class DevNullDriver extends Translator
     {
         // set fake translate for enable searchDefaultTranslate()
         $this->dictionary['__DevNullDriver__'] = true;
+
+        // process default translate
+        $this->searchDefaultTranslate();
     }
 
 

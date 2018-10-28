@@ -101,6 +101,9 @@ class DibiDriver extends Translator
             } catch (\Throwable $e) {
             }
         }
+
+        // process default translate
+        $this->searchDefaultTranslate();
     }
 
 

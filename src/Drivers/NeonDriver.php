@@ -55,6 +55,9 @@ class NeonDriver extends Translator
         if (file_exists($this->getPath())) {
             $this->dictionary = Neon::decode(file_get_contents($this->getPath()));
         }
+
+        // process default translate
+        $this->searchDefaultTranslate();
     }
 
 
