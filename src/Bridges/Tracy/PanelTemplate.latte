@@ -49,7 +49,7 @@
                     <tr n:foreach="$items as $ident => $item">
                         <td>
                             <a n:tag-ifset="$listAllDefaultTranslate[$ident]" class="tracy-toggle tracy-collapsed" data-tracy-ref="^div .tracy-default-translate-item-{$ident|webalize}">{$ident}</a>
-                            <div n:ifset="$listAllDefaultTranslate[$ident]" class="tracy-default-translate-item-{$ident|webalize} tracy-collapsed">{$item}</div>
+                            <div n:ifset="$listAllDefaultTranslate[$ident]" class="tracy-default-translate-item-{$ident|webalize} tracy-collapsed">{$item['value']}</div>
                         </td>
                         <td style="text-align: center;">
                             {ifset $listUsedTranslate[$ident]}{include #svgTrue}{else}{include #svgFalse}{/ifset}

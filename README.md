@@ -30,9 +30,9 @@ Include in application
 ----------------------
 
 available source drivers:
-- DibiDriver (dibi + cache, self translation db table)
+- DevNullDriver (ignore translate, only default translate)
 - NeonDriver (filesystem in neon syntax)
-- DevNullDriver (ignore translate)
+- DibiDriver (dibi + cache `_Translator-Drivers-DibiDriver`, self translation db table)
 
 neon configure:
 ```neon

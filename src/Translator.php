@@ -29,9 +29,7 @@ abstract class Translator implements ITranslator
     /** @var string */
     protected $plural;
     /** @var array */
-    private $listDefaultTranslate = [], $listAllDefaultTranslate = [], $listUsedIndex = [];
-    /** @var array */
-    private $searchMask, $searchPath, $excludePath;
+    private $listAllDefaultTranslate = [], $listUsedIndex = [];
     /** @var SearchContent */
     private $searchContent;
 
@@ -78,7 +76,7 @@ abstract class Translator implements ITranslator
 //            \Tracy\Debugger::fireLog('Translator::translate, loadTranslate');
             $this->loadTranslate();  // load data
             // process default translate
-            $this->searchDefaultTranslate($this->searchMask, $this->searchPath, $this->excludePath);
+            $this->searchDefaultTranslate();
         }
 
         $indexDictionary = $message; // message is index (identification) for translation
@@ -158,7 +156,6 @@ abstract class Translator implements ITranslator
      */
     private function searchDefaultTranslate()
     {
-        $this->listDefaultTranslate = $this->searchContent->getListCategory();
         $this->listAllDefaultTranslate = $this->searchContent->getList();
 
         if ($this->dictionary && $this->listAllDefaultTranslate) {
@@ -183,7 +180,7 @@ abstract class Translator implements ITranslator
      */
     public function getListDefaultTranslate(): array
     {
-        return $this->listDefaultTranslate;
+        return $this->searchContent->getListCategory();
     }
 
 
