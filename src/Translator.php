@@ -4,12 +4,8 @@ namespace Translator;
 
 use Locale\ILocale;
 use Nette\Localization\ITranslator;
-use Nette\Neon\Neon;
 use Nette\SmartObject;
-use Nette\Utils\Finder;
-use Nette\Utils\Strings;
 use SearchContent;
-use SplFileInfo;
 
 
 /**
@@ -51,6 +47,7 @@ abstract class Translator implements ITranslator
     /**
      * Add used index.
      *
+     * @internal
      * @param string $index
      */
     private function addUsedIndex(string $index)
@@ -75,8 +72,6 @@ abstract class Translator implements ITranslator
             $this->plural = $this->locale->getPlural();
 //            \Tracy\Debugger::fireLog('Translator::translate, loadTranslate');
             $this->loadTranslate();  // load data
-            // process default translate
-            $this->searchDefaultTranslate();
         }
 
         $indexDictionary = $message; // message is index (identification) for translation
@@ -141,6 +136,7 @@ abstract class Translator implements ITranslator
     /**
      * Set path search.
      *
+     * @internal
      * @param array $searchMask
      * @param array $searchPath
      * @param array $excludePath
@@ -153,9 +149,12 @@ abstract class Translator implements ITranslator
 
     /**
      * Search default translate.
+     *
+     * @internal
      */
-    private function searchDefaultTranslate()
+    protected function searchDefaultTranslate()
     {
+        // call in: loadInternalData()
         if ($this->searchContent) {
             $this->listAllDefaultTranslate = $this->searchContent->getList();
 
@@ -178,6 +177,7 @@ abstract class Translator implements ITranslator
     /**
      * Get list default translate.
      *
+     * @internal
      * @return array
      */
     public function getListDefaultTranslate(): array
@@ -189,6 +189,7 @@ abstract class Translator implements ITranslator
     /**
      * Get list all default translate.
      *
+     * @internal
      * @return array
      */
     public function getListAllDefaultTranslate(): array
@@ -200,6 +201,7 @@ abstract class Translator implements ITranslator
     /**
      * Get list used translate.
      *
+     * @internal
      * @return array
      */
     public function getListUsedTranslate(): array
@@ -241,6 +243,8 @@ abstract class Translator implements ITranslator
 
     /**
      * Load translate.
+     *
+     * @internal
      */
     abstract protected function loadTranslate();
 
@@ -248,6 +252,7 @@ abstract class Translator implements ITranslator
     /**
      * Save translate.
      *
+     * @internal
      * @param string $identification
      * @param        $message
      * @param null   $idLocale
