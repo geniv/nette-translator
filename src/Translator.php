@@ -8,6 +8,7 @@ use Nette\Neon\Neon;
 use Nette\SmartObject;
 use Nette\Utils\Finder;
 use Nette\Utils\Strings;
+use SearchContent;
 use SplFileInfo;
 
 
@@ -31,6 +32,8 @@ abstract class Translator implements ITranslator
     private $listDefaultTranslate = [], $listAllDefaultTranslate = [], $listUsedIndex = [];
     /** @var array */
     private $searchMask, $searchPath, $excludePath;
+    /** @var SearchContent */
+    private $searchContent;
 
 
     /**
@@ -146,22 +149,30 @@ abstract class Translator implements ITranslator
      */
     public function setSearchPath(array $searchMask = [], array $searchPath = [], array $excludePath = [])
     {
-        $this->searchMask = $searchMask;
-        $this->searchPath = $searchPath;
-        $this->excludePath = $excludePath;
+        $this->searchContent = new SearchContent($searchMask, $searchPath, $excludePath, true);
     }
 
 
     /**
      * Search default translate.
-     *
-     * @param array $searchMask
-     * @param array $searchPath
-     * @param array $excludePath
      */
-    private function searchDefaultTranslate(array $searchMask, array $searchPath = [], array $excludePath = [])
+    private function searchDefaultTranslate()
     {
-        if ($searchPath) {
+        $this->listDefaultTranslate = $this->searchContent->getListCategory();
+        $this->listAllDefaultTranslate = $this->searchContent->getList();
+
+        if ($this->dictionary) {
+            // if define dictionary
+            foreach ($this->listAllDefaultTranslate as $identification => $message) {
+                // save only not exist identification and only string message or identification is same like dictionary index (default translate)
+                if ((!isset($this->dictionary[$identification]) && !is_array($message)) || $this->dictionary[$identification] == $identification) {
+                    // call only save default value load from files
+                    $this->saveTranslate($identification, $message);
+                }
+            }
+        }
+
+        /*if ($searchPath) {
             $files = [];
             foreach ($searchPath as $path) {
                 // insert dirs
@@ -212,7 +223,7 @@ abstract class Translator implements ITranslator
                     }
                 }
             }
-        }
+        }*/
     }
 
 
