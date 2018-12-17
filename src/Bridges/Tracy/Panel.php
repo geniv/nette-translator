@@ -5,7 +5,7 @@ namespace Translator\Bridges\Tracy;
 use Latte\Engine;
 use Nette\SmartObject;
 use Tracy\IBarPanel;
-use Translator\Translator;
+use Translator\ITranslator;
 
 
 /**
@@ -18,16 +18,16 @@ class Panel implements IBarPanel
 {
     use SmartObject;
 
-    /** @var Translator */
+    /** @var ITranslator */
     private $translator;
 
 
     /**
      * Panel constructor.
      *
-     * @param Translator $translator
+     * @param ITranslator $translator
      */
-    public function __construct(Translator $translator)
+    public function __construct(ITranslator $translator)
     {
         $this->translator = $translator;
     }

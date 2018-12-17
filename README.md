@@ -14,16 +14,16 @@ $ composer require geniv/nette-translator
 ```
 or
 ```json
-"geniv/nette-translator": ">=1.0.0"
+"geniv/nette-translator": "^2.0"
 ```
 
 require:
 ```json
-"php": ">=7.0.0",
-"nette/nette": ">=2.4.0",
-"dibi/dibi": ">=3.0.0",
-"geniv/nette-locale": ">=1.0.0",
-"geniv/nette-search-content": ">=1.0.0"
+"php": ">=7.0",
+"nette/nette": ">=2.4",
+"dibi/dibi": ">=3.0",
+"geniv/nette-locale": ">=2.0",
+"geniv/nette-search-content": ">=1.0"
 ```
 
 Include in application
@@ -32,7 +32,7 @@ Include in application
 available source drivers:
 - DevNullDriver (ignore translate, only default translate)
 - NeonDriver (filesystem in neon syntax)
-- DibiDriver (dibi + cache `_Translator-Drivers-DibiDriver`, self translation db table)
+- DibiDriver (dibi + cache `_Translator-DibiDriver`, self translation db table)
 
 neon configure:
 ```neon

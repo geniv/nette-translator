@@ -50,7 +50,7 @@ class DibiDriver extends Translator
         $this->tableTranslateIdent = $prefix . self::TABLE_NAME_IDENT;
 
         $this->connection = $connection;
-        $this->cache = new Cache($storage, 'Translator-Drivers-DibiDriver');
+        $this->cache = new Cache($storage, 'Translator-DibiDriver');
     }
 
 
@@ -96,7 +96,7 @@ class DibiDriver extends Translator
 
             try {
                 $this->cache->save($cacheKey, $this->dictionary, [
-                    Cache::TAGS => ['saveCache'],
+                    Cache::TAGS => ['loadData'],
                 ]);
             } catch (\Throwable $e) {
             }
@@ -127,7 +127,11 @@ class DibiDriver extends Translator
         $this->connection->insert($this->tableTranslate, $values)->onDuplicateKeyUpdate('%a', $values)->execute();
 
         $this->dictionary[$identification] = $message;   // add to dictionary
-        $this->saveCache();
+
+        // internal clean cache
+        $this->cache->clean([
+            Cache::TAGS => ['loadData'],
+        ]);
 
         return $message;    // return message
     }
