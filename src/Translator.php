@@ -3,7 +3,6 @@
 namespace Translator;
 
 use Locale\ILocale;
-use Nette\Localization\ITranslator;
 use Nette\SmartObject;
 use SearchContent;
 
