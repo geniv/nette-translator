@@ -46,4 +46,9 @@ interface ITranslator extends \Nette\Localization\ITranslator
      */
     public function getDictionary(): array;
 
+
+    /**
+     * Clean cache.
+     */
+    public function cleanCache();
 }

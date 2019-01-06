@@ -79,6 +79,18 @@ class DibiDriver extends Translator
 
 
     /**
+     * Clean cache.
+     */
+    public function cleanCache()
+    {
+        // internal clean cache
+        $this->cache->clean([
+            Cache::TAGS => ['loadData'],
+        ]);
+    }
+
+
+    /**
      * Load translate.
      */
     protected function loadTranslate()
@@ -129,9 +141,7 @@ class DibiDriver extends Translator
         $this->dictionary[$identification] = $message;   // add to dictionary
 
         // internal clean cache
-        $this->cache->clean([
-            Cache::TAGS => ['loadData'],
-        ]);
+        $this->cleanCache();
 
         return $message;    // return message
     }

@@ -48,6 +48,15 @@ class NeonDriver extends Translator
 
 
     /**
+     * Clean cache.
+     */
+    public function cleanCache()
+    {
+        // empty body
+    }
+
+
+    /**
      * Load translate.
      */
     protected function loadTranslate()
